@@ -1,4 +1,4 @@
-from semtypes.field_types import (
+from schemas.field_types import (
     Binary,
     Boolean,
     Decimal,

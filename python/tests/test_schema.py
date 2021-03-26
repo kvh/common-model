@@ -3,8 +3,8 @@ from __future__ import annotations
 import decimal
 from dataclasses import asdict
 from datetime import date, datetime
-from semtypes.field_types import Text
-from semtypes.base import (
+from schemas.field_types import Text
+from schemas.base import (
     AnySchema,
     Implementation,
     Validator,
