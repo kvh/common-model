@@ -3,6 +3,7 @@ authors = ["Ken Van Haren <kenvanharen@gmail.com>"]
 description = "Universal Object Schemas"
 license = "BSD-3-Clause"
 name = "semantic-schemas"
+packages = [{include = "schemas"}]
 version = "0.1.0"
 
 [tool.poetry.dependencies]
