@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import decimal
 import inspect
-from datetime import date, datetime, time, timedelta
-from typing import Any, Dict, Iterable, List, Optional, Set, Tuple, Type, Union
+from typing import Any, Dict, List, Type, Union
 
 
-
-LONG_TEXT = 2 ** 16
 
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
@@ -33,6 +29,7 @@ LONG_TEXT = 2 ** 16
 # LargeBinary,
 # LargeUtf8,
 # LargeList,
+
 
 # Generic sqlalchemy types, for reference
 # 
@@ -68,8 +65,6 @@ class FieldTypeBase:
     _kwargs: Dict[str, Any]
 
     def __init__(self, *args, **kwargs):
-        sig = inspect.signature(self.sqlalchemy_type)
-        self.parameter_names = list(sig.parameters.keys())
         _kwargs = dict(self.defaults)
         for i, arg in enumerate(args):
             name = self.parameter_names[i]
@@ -90,7 +85,7 @@ class FieldTypeBase:
             s += f"({kwargs})"
         return s
 
-    def __eq__(self, o: object) -> bool:
+    def __eq__(self, o: FieldTypeBase) -> bool:
         return type(self) is type(o) and self._kwargs == o._kwargs
 
     def __hash__(self):

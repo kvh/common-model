@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
+import yaml
 from semtypes.field_types import (
     FieldType,
     FieldTypeLike,
@@ -39,7 +40,7 @@ SchemaName = str
 @dataclass(frozen=True)
 class Relation:
     name: str
-    schema: SchemaKey
+    schema_key: SchemaKey
     fields: Dict[str, str]
 
 
@@ -49,7 +50,7 @@ class Implementation:
     fields: Dict[str, str]
 
     def as_schema_translation(
-        self, other_key: SchemaKey
+        self, schema_key: SchemaKey, other_key: SchemaKey
     ) -> SchemaTranslation:
         # TODO: this inversion is a bit confusing
         trans = {v: k for k, v in self.fields.items()}
@@ -76,7 +77,9 @@ class Schema:
     primary_dimension: Optional[str] = None  # TODO: TBD if we want this
     dimensions: Optional[List[str]] = None
     facts: Optional[List[str]] = None
-    expected_cardinality: Optional[int] = None # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
+    expected_cardinality: Optional[
+        int
+    ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
     field_lookup: Optional[Dict[str, Field]] = None
 
     @property
@@ -110,14 +113,13 @@ class Schema:
         d["fields"] = fields
         return Schema(**d)
 
-    def get_translation_to(
-        self, other_key: SchemaKey
-    ) -> Optional[SchemaTranslation]:
+    def get_translation_to(self, other: SchemaLike) -> Optional[SchemaTranslation]:
+        other_key = schema_like_to_key(other)
         if not self.implementations:
             return None
         for impl in self.implementations:
             if impl.schema_key == other_key:
-                return impl.as_schema_translation(other_key)
+                return impl.as_schema_translation(self.key, other_key)
         return None
 
 
@@ -141,7 +143,6 @@ class SchemaTranslation:
         return self.translation
 
 
-
 def is_any(schema_like: SchemaLike) -> bool:
     name = schema_like_to_name(schema_like)
     return name == "Any"
@@ -153,6 +154,18 @@ def schema_like_to_name(d: SchemaLike) -> str:
     if isinstance(d, str):
         return d.split(".")[-1]
     raise TypeError(d)
+
+
+def schema_like_to_key(d: SchemaLike) -> str:
+    if isinstance(d, Schema):
+        return d.key
+    if isinstance(d, str):
+        return d
+    raise TypeError(d)
+
+
+def schema_from_yaml(yml: str, **overrides: Any) -> Schema:
+    return schema_from_dict(yaml.load(yml), **overrides)
 
 
 def schema_from_dict(d: Dict[str, Any], **overrides: Any) -> Schema:
@@ -170,6 +183,8 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     raw_fields = raw_def.pop("fields", {})
     raw_def["fields"] = []
     for name, f in raw_fields.items():
+        if isinstance(f, str):
+            f = {"type": f}
         nf = {"name": name, "field_type": f.pop("type", None)}
         nf.update(f)
         raw_def["fields"].append(nf)
@@ -180,19 +195,23 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
         raw_def["unique_on"] = [raw_def["unique_on"]]
     ir = raw_def.get("immutable")
     if isinstance(ir, str):
-        raw_def["immutable"] = ensure_bool(ir)
+        raw_def["immutable"] = ir.startswith("t") or ir.startswith("y")
     # raw_def["type_class"] = raw_def.pop("class", None)
-    if "module_name" not in raw_def:
-        raw_def["module_name"] = raw_def.pop("module", None)
+    if "namespace" not in raw_def:
+        raw_def["namespace"] = raw_def.pop("namespace", None)
     return raw_def
 
 
 def build_schema_from_dict(d: dict, **overrides: Any) -> Schema:
     fields = [build_field_from_dict(f) for f in d.pop("fields", [])]
     d["implementations"] = [
-        Implementation(schema_key=k, fields=v) for k, v in d.pop("implementations", {}).items()
+        Implementation(schema_key=k, fields=v)
+        for k, v in d.pop("implementations", {}).items()
     ]
-    # TODO: relations and implementations
+    d["relations"] = [
+        Relation(name=k, schema_key=v["schema"], fields=v["fields"])
+        for k, v in d.pop("relations", {}).items()
+    ]
     d["fields"] = fields
     d.update(**overrides)
     schema = Schema(**d)
@@ -247,11 +266,9 @@ def create_quick_field(name: str, field_type: FieldTypeLike, **kwargs) -> Field:
 
 # Helper
 def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
-    from snapflow.core.module import DEFAULT_LOCAL_MODULE_NAME
-
     defaults: Dict[str, Any] = dict(
         name=name,
-        module_name=DEFAULT_LOCAL_MODULE_NAME,
+        namespace=None,
         version="1.0",
         description="...",
         unique_on=[],
