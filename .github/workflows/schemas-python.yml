@@ -1,4 +1,4 @@
-name: schemas
+name: schemas-python
 
 on:
   push:
