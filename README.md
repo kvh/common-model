@@ -1,12 +1,10 @@
-![schemas](https://github.com/kvh/schemas/workflows/schemas-python/badge.svg)
+![schemas](https://github.com/kvh/openschema/workflows/openschema-python/badge.svg)
 
-# Semantic Schemas
+# OpenSchema
 
-# Common Schema
+OpenSchema is a universal specification for describing the structure and semantics of data, record, and object types. Think supercharged "CREATE TABLE" statement or JSON spec. The goal of OpenSchema is to provide a universal library of common Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. OpenSchema is the data protocol for the next 70,000 years.
 
-Semantic Schemas are a universal format for specifying the structure and semantics of data, record, and object types. Think supercharged "CREATE TABLE" statement or JSON spec. The goal of Semantic Schemas is to provide a universal library of common Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. Semantic Schemas are a data protocol for the next 70,000 years.
-
-The Semantic Schema Repository has many common schemas like:
+The OpenSchema Repository has many common schemas like:
 
 - Country
 - Currency
@@ -26,10 +24,13 @@ and popular third-party ones like:
 - MailchimpMember
 - SalesforceCustomer
 
-Semantic Schemas provide a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation of the meaning and details of each. A basic Schema looks like this:
+OpenSchemas provide a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation of the meaning and details of each. A basic Schema looks like this:
 
 ```yaml
+openschema: 0.3.0
+
 name: Transaction
+namespace: common
 version: 0.1.0
 description: |
   Represents any commercial transaction of an amount at a given time, optionally
@@ -47,11 +48,11 @@ fields:
   currency_code: Text
   metadata: Json
 relations:
-  Currency:
+  common.Currency:
     fields:
       code: currency_code
 implementations:
-  TimeSeries:
+  common.TimeSeries:
     time: transacted_at
     value: amount
 
@@ -66,51 +67,6 @@ documentation:
       Unique identifier for this transaction, required so that transactions can
       be deduped accurately. If data does not have a unique identifier, either
       create one, or use a more basic schema like `common.TimeSeries`.
-```
-
-Toml reads better imo, but isn't designed to handle nested dictionaries cleanly:
-
-```toml
-name = "Transaction"
-version = 1
-description = '''
-  Represents a transaction of an amount at a given time, optionally
-  specifying the buyer, seller, currency, and item transacted as well.
-  '''
-immutable = true
-unique_on = ["id"]
-
-[fields]
-id = "Text NotNull"
-  [fields.amount]
-  type = "Decimal(16,2)"
-  validators = ["NotNull"]
-  description = "Amount of the transaction"
-transacted_at = "DateTime NotNull"
-buyer_id = "Text"
-seller_id = "Text"
-
-[relations.Currency.fields]
-code = "currency_code"
-
-[implementations.TimeSeries]
-time = "transacted_at"
-value = "amount"
-
-[documentation]
-schema = '''
-    A Transaction is meant to be the broadest, most base definition
-    for all commercial transactions involving a buyer and a seller or a sender
-    and receiver, whether that's an ecommerce order, a ACH transfer, or a real
-    estate sale.
-'''
-
-[documentation.fields]
-id = '''
-      Unique identifier for this transaction, required so that transactions can
-      be deduped accurately. If data does not have a unique identifier, either
-      create one, or use a more basic schema like `common.TimeSeries`.
-'''
 ```
 
 ## Versioning

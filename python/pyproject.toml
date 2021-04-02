@@ -1,9 +1,8 @@
 [tool.poetry]
 authors = ["Ken Van Haren <kenvanharen@gmail.com>"]
-description = "Universal Object Schemas"
+description = "Universal Data Schemas"
 license = "BSD-3-Clause"
-name = "semantic-schemas"
-packages = [{include = "schemas"}]
+name = "openschema"
 version = "0.1.0"
 
 [tool.poetry.dependencies]

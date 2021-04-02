@@ -77,6 +77,8 @@ class Schema:
         int
     ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
     field_lookup: Optional[Dict[str, Field]] = None
+    openschema: Optional[str] = None # openschema spec version
+    documentation: Optional[Dict[str, Union[str, Dict[str, str]]]] = None
 
     @property
     def key(self) -> str:
