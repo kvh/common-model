@@ -3,8 +3,6 @@ from __future__ import annotations
 import inspect
 from typing import Any, Dict, List, Type, Union
 
-
-
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
 #
@@ -32,7 +30,7 @@ from typing import Any, Dict, List, Type, Union
 
 
 # Generic sqlalchemy types, for reference
-# 
+#
 # BigInteger
 # Boolean
 # Date
@@ -54,12 +52,12 @@ from typing import Any, Dict, List, Type, Union
 # UnicodeText
 
 
-
 class FieldTypeBase:
     parameter_names: List[str] = []
     defaults: Dict[str, Any] = {}
     castable_to_types: List[str] = [
-        "LongText", "LongBinary"
+        "LongText",
+        "LongBinary",
     ]  # TODO: Can represent any existing type as a long str?
     # inferrable_from_types: List[str] # TODO
     _kwargs: Dict[str, Any]
@@ -91,6 +89,15 @@ class FieldTypeBase:
     def __hash__(self):
         return hash(repr(self))
 
+    def get_parameters(self) -> Dict[str, Any]:
+        return self._kwargs
+
+    def get_parameter(self, name: str) -> Any:
+        return self._kwargs.get(name)
+
+    def update_parameter(self, name: str, value: Any):
+        self._kwargs[name] = value
+
     @property
     def name(self) -> str:
         return self.__class__.__name__
@@ -110,6 +117,7 @@ FieldTypeLike = Union[FieldTypeBase, str]
 ### Numeric types
 #################
 
+
 class Boolean(FieldTypeBase):
     castable_to_types = ["Integer", "Float", "Decimal", "Text", "LongText"]
 
@@ -120,25 +128,26 @@ class Integer(FieldTypeBase):
 
 class Float(FieldTypeBase):
     castable_to_types = [
-        "Decimal", # Kind of true, potential data loss
+        "Decimal",  # Kind of true, potential data loss
         "Text",
         "LongText",
-    ] 
+    ]
 
 
 class Decimal(FieldTypeBase):
     parameter_names = ["scale", "precision"]
-    defaults= {"scale": 16}
+    defaults = {"scale": 16}
     castable_to_types = [
-        "Float", # Kind of true, potential data loss
+        "Float",  # Kind of true, potential data loss
         "Text",
         "LongText",
-    ] 
+    ]
 
 
 ################
 ### String types
 ################
+
 
 class Binary(FieldTypeBase):
     parameter_names = ["length"]
@@ -163,6 +172,7 @@ class LongText(FieldTypeBase):
 ### Date and time types
 ##################
 
+
 class Date(FieldTypeBase):
     castable_to_types = ["DateTime", "Text", "LongText"]
 
@@ -185,15 +195,17 @@ class Interval(FieldTypeBase):
 ### Composite types (TBD)
 ###################
 
+
 class Json(FieldTypeBase):
     pass
+
 
 class Struct(FieldTypeBase):
     pass
 
+
 class Array(FieldTypeBase):
     pass
-
 
 
 all_types = [
@@ -214,13 +226,11 @@ all_types = [
 ]
 all_types_instantiated = [ft() for ft in all_types]
 
-DEFAULT_FIELD_TYPE = Text
+DEFAULT_FIELD_TYPE_CLASS = Text
+DEFAULT_FIELD_TYPE = Text()
 
 
 def str_to_field_type(s: str) -> Union[Type[FieldType], FieldType]:
-    """
-    Supports additional Sqlalchemy types and arrow types, as well as legacy names
-    """
     local_vars = {f().name.lower(): f for f in all_types}
     try:
         ls = s.lower()

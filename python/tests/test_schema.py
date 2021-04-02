@@ -3,7 +3,9 @@ from __future__ import annotations
 import decimal
 from dataclasses import asdict
 from datetime import date, datetime
-from schemas.field_types import Text
+from sys import implementation
+
+import pytest
 from schemas.base import (
     AnySchema,
     Implementation,
@@ -11,9 +13,7 @@ from schemas.base import (
     create_quick_schema,
     schema_from_yaml,
 )
-from sys import implementation
-
-import pytest
+from schemas.field_types import Text
 
 test_schema_yml = """
 name: TestSchema
@@ -72,4 +72,3 @@ def test_schema_translation():
 def test_any_schema():
     assert AnySchema.name == AnySchema.key == "Any"
     assert AnySchema.fields == []
-

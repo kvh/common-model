@@ -4,13 +4,8 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
-
 import yaml
-from schemas.field_types import (
-    FieldType,
-    FieldTypeLike,
-    ensure_field_type,
-)
+from schemas.field_types import FieldType, FieldTypeLike, ensure_field_type
 
 
 @dataclass(frozen=True)
@@ -289,4 +284,3 @@ AnySchema = Schema(
     unique_on=[],
     fields=[],
 )
-
