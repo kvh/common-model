@@ -56,7 +56,7 @@ implementations:
 ```
 
 ```toml
-name = Transaction
+name = "Transaction"
 version = 1
 description = """\
   Represents a transaction of an amount at a given time, optionally
