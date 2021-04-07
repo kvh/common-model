@@ -1,11 +1,12 @@
-![openmodel-python](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
-
 # OpenModel
 
-A universal data protocol for the next 70,000 years.
+**A universal data protocol for the next 70,000 years.**
 
-OpenModel is a specification for describing the structure and semantics of objects and their data representations. Think supercharged "CREATE TABLE" statement or JSON spec. OpenModel provides a universal library of common inter-related Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. Whether it's publishing or consuming API endpoints,
-aggregating ML training data, or curating public research datasets, OpenModel enables global collaboration on data for the first time.
+![openmodel-python](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
+
+OpenModel is a shared specification for describing the structure and semantics of objects and their data representations -- a "lingua franca"
+of data. In practice, think supercharged "CREATE TABLE" statement or JSON spec. OpenModel provides a universal library of common inter-related Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. Whether it's publishing or consuming API endpoints,
+aggregating ML training data, or curating public research datasets, OpenModel enables new levels of global collaboration on data.
 
 The OpenModel Repository has many common Schemas like:
 
@@ -27,7 +28,7 @@ and popular third-party ones like:
 - MailchimpMember
 - SalesforceCustomer
 
-A OpenModel Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
+An OpenModel Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
 
 ```yaml
 openmodel: 0.3.0
