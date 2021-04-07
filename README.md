@@ -1,4 +1,4 @@
-![schemas](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
+![openmodel-python](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
 
 # OpenModel
 

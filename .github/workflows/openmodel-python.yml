@@ -1,4 +1,4 @@
-name: schemas-python
+name: openmodel-python
 
 on:
   push:
