@@ -1,4 +1,4 @@
-from schemas.field_types import (
+from openmodel.field_types import (
     Binary,
     Boolean,
     Decimal,

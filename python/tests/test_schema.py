@@ -1,19 +1,13 @@
 from __future__ import annotations
 
-import decimal
-from dataclasses import asdict
-from datetime import date, datetime
-from sys import implementation
-
-import pytest
-from schemas.base import (
+from openmodel.base import (
     AnySchema,
     Implementation,
     Validator,
     create_quick_schema,
     schema_from_yaml,
 )
-from schemas.field_types import Text
+from openmodel.field_types import Text
 
 test_schema_yml = """
 name: TestSchema

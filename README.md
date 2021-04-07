@@ -1,10 +1,13 @@
-![schemas](https://github.com/kvh/openschema/workflows/openschema-python/badge.svg)
+![schemas](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
 
-# OpenSchema
+# OpenModel
 
-OpenSchema is a universal specification for describing the structure and semantics of data, record, and object types. Think supercharged "CREATE TABLE" statement or JSON spec. The goal of OpenSchema is to provide a universal library of common Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. OpenSchema is the data protocol for the next 70,000 years.
+A universal data protocol for the next 70,000 years.
 
-The OpenSchema Repository has many common schemas like:
+OpenModel is a specification for describing the structure and semantics of objects and their data representations. Think supercharged "CREATE TABLE" statement or JSON spec. OpenModel provides a universal library of common inter-related Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. Whether it's publishing or consuming API endpoints,
+aggregating ML training data, or curating public research datasets, OpenModel enables global collaboration on data for the first time.
+
+The OpenModel Repository has many common Schemas like:
 
 - Country
 - Currency
@@ -17,23 +20,23 @@ The OpenSchema Repository has many common schemas like:
 
 and popular third-party ones like:
 
+- WorldBankCountryIndicator
 - StripeCharge
 - FredObservation
 - ShopifyOrder
-- WorldBankCountryIndicator
 - MailchimpMember
 - SalesforceCustomer
 
-OpenSchemas provide a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation of the meaning and details of each. A basic Schema looks like this:
+A OpenModel Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
 
 ```yaml
-openschema: 0.3.0
+openmodel: 0.3.0
 
 name: Transaction
 namespace: common
 version: 0.1.0
 description: |
-  Represents any commercial transaction of an amount at a given time, optionally
+  Represents any commercial transaction of a set amount at a given time, optionally
   specifying the buyer, seller, currency, and item transacted.
 immutable: true
 unique_on:
