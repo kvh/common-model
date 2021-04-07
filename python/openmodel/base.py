@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import yaml
-from schemas.field_types import FieldType, FieldTypeLike, ensure_field_type
+from openmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 
 
 @dataclass(frozen=True)
@@ -67,16 +67,18 @@ class Schema:
     implementations: List[Implementation] = field(default_factory=list)
     immutable: bool = False
     raw_definition: Optional[str] = None
-    extends: Optional[
-        SchemaKey
-    ] = None  # TODO: TBD how useful this would be, or exactly how it would work
+    # extends: Optional[
+    #     SchemaKey
+    # ] = None  # TODO: TBD how useful this would be, or exactly how it would work
     primary_dimension: Optional[str] = None  # TODO: TBD if we want this
     dimensions: Optional[List[str]] = None
     facts: Optional[List[str]] = None
-    expected_cardinality: Optional[
-        int
-    ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
+    # expected_cardinality: Optional[
+    #     int
+    # ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
     field_lookup: Optional[Dict[str, Field]] = None
+    openmodel: Optional[str] = None  # openmodel spec version
+    documentation: Optional[Dict[str, Union[str, Dict[str, str]]]] = None
 
     @property
     def key(self) -> str:

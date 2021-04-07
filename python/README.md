@@ -1,1 +1,1 @@
-# Python library for Semantic Schemas
+# Python OpenModel library
