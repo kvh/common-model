@@ -1,1 +1,1 @@
-# Python OpenModel library
+# Python Common Model library

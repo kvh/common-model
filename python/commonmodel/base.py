@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import yaml
-from openmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
+from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 
 
 @dataclass(frozen=True)
@@ -77,7 +77,7 @@ class Schema:
     #     int
     # ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
     field_lookup: Optional[Dict[str, Field]] = None
-    openmodel: Optional[str] = None  # openmodel spec version
+    commonmodel: Optional[str] = None  # commonmodel spec version
     documentation: Optional[Dict[str, Union[str, Dict[str, str]]]] = None
 
     @property

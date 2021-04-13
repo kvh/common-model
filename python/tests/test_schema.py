@@ -1,13 +1,13 @@
 from __future__ import annotations
 
-from openmodel.base import (
+from commonmodel.base import (
     AnySchema,
     Implementation,
     Validator,
     create_quick_schema,
     schema_from_yaml,
 )
-from openmodel.field_types import Text
+from commonmodel.field_types import Text
 
 test_schema_yml = """
 name: TestSchema

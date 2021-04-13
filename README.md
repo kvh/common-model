@@ -1,14 +1,22 @@
-# OpenModel
+![commonmodel-python](https://github.com/kvh/commonmodel/workflows/commonmodel-python/badge.svg)
 
-**A universal data protocol for the next 70,000 years.**
+# Common Model
 
-![openmodel-python](https://github.com/kvh/openmodel/workflows/openmodel-python/badge.svg)
+**A data protocol for the next 70,000 years.**
 
-OpenModel is a shared specification for describing the structure and semantics of objects and their data representations -- a "lingua franca"
-of data. In practice, think supercharged "CREATE TABLE" statement or JSON spec. OpenModel provides a universal library of common inter-related Schemas that tools, libraries, researchers, analysts, databases, and APIs can use to communicate data frictionlessly. Whether it's publishing or consuming API endpoints,
-aggregating ML training data, or curating public research datasets, OpenModel enables new levels of global collaboration on data.
+Common Model is a shared specification for describing the structure and semantics
+of objects and their data representations -- a "lingua franca"
+of data. In practice, think supercharged "CREATE TABLE" statement or JSON spec.
 
-The OpenModel Repository has many common Schemas like:
+Anyone can contribute Schemas to the Common Model Repository and help build
+a shared global model of data that tools, libraries, researchers, analysts, databases,
+and apis can use to communicate data frictionlessly.
+
+Whether it's publishing
+or consuming API endpoints, aggregating ML training data, or curating public
+research datasets, Common Model enables global collaboration on data.
+
+The Common Model Repository has core Schemas like:
 
 - Country
 - Currency
@@ -28,10 +36,10 @@ and popular third-party ones like:
 - MailchimpMember
 - SalesforceCustomer
 
-An OpenModel Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
+A Common Model Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
 
 ```yaml
-openmodel: 0.3.0
+commonmodel: 0.3.0
 
 name: Transaction
 namespace: common
