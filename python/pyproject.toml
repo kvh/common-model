@@ -2,7 +2,10 @@
 authors = ["Ken Van Haren <kenvanharen@gmail.com>"]
 description = "Universal Data Schemas"
 license = "BSD-3-Clause"
-name = "commonmodel"
+name = "common-model"
+packages = [
+  {include = "commonmodel"},
+]
 version = "0.1.0"
 
 [tool.poetry.dependencies]

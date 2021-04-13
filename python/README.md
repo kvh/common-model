@@ -1,1 +1,1 @@
-# Python Common Model library
+# Common Model Python library

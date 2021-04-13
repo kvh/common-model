@@ -17,7 +17,7 @@ class Field:
 
     def is_nullable(self) -> bool:
         for v in self.validators:
-            if "nonnull" in v.name.lower():
+            if "notnull" in v.name.lower():
                 return False
         return True
 
@@ -109,7 +109,7 @@ class Schema:
             elif isinstance(f, Field):
                 pass
             else:
-                raise ValueError(f)
+                raise TypeError(f)
             fields.append(f)
         d["fields"] = fields
         return Schema(**d)
@@ -166,7 +166,7 @@ def schema_like_to_key(d: SchemaLike) -> str:
 
 
 def schema_from_yaml(yml: str, **overrides: Any) -> Schema:
-    return schema_from_dict(yaml.load(yml), **overrides)
+    return schema_from_dict(yaml.load(yml, Loader=yaml.SafeLoader), **overrides)
 
 
 def schema_from_dict(d: Dict[str, Any], **overrides: Any) -> Schema:
@@ -226,9 +226,12 @@ def build_field_from_dict(d: dict) -> Field:
     return f
 
 
-def load_validator_from_dict(v: str) -> Validator:
-    # TODO
-    return Validator(v)
+def load_validator_from_dict(v: Union[str, Dict]) -> Validator:
+    if isinstance(v, str):
+        return Validator(name=v)
+    elif isinstance(v, dict):
+        return Validator(**v)
+    raise TypeError(v)
 
 
 def schema_to_yaml(schema: Schema) -> str:

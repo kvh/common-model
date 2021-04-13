@@ -1,16 +1,23 @@
 from __future__ import annotations
+from dataclasses import asdict
 
 from commonmodel.base import (
     AnySchema,
     Implementation,
+    Schema,
     Validator,
     create_quick_schema,
+    is_any,
     schema_from_yaml,
+    schema_like_to_key,
+    schema_like_to_name,
+    schema_to_yaml,
 )
 from commonmodel.field_types import Text
 
 test_schema_yml = """
 name: TestSchema
+namespace: _test
 version: 3
 description: Description
 unique_on: uniq
@@ -38,10 +45,12 @@ def test_schema_yaml():
     tt = schema_from_yaml(test_schema_yml)
     assert tt.name == "TestSchema"
     assert tt.version in ("3", 3)  # TODO: strictyaml
+    assert tt.key == "_test.TestSchema"
     assert len(tt.fields) == 3
     f1 = tt.get_field("uniq")
     assert f1.field_type == Text(3)
     assert f1.validators == [Validator(name="NotNull")]
+    assert f1.is_nullable() is False
     assert len(tt.relations) == 1
     rel = tt.relations[0]
     assert rel.schema_key == "OtherSchema"
@@ -50,6 +59,11 @@ def test_schema_yaml():
     impl = tt.implementations[0]
     assert impl.schema_key == "SubType"
     assert impl.fields == {"sub_uniq": "uniq"}
+    assert is_any(tt) is False
+    assert schema_like_to_name(tt) == "TestSchema"
+    assert schema_like_to_key(tt) == "_test.TestSchema"
+    assert schema_to_yaml(tt) is not None  # TODO
+    assert asdict(Schema.from_dict(asdict(tt))) == asdict(tt)
 
 
 def test_schema_translation():

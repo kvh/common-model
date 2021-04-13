@@ -6,17 +6,20 @@
 
 Common Model is a shared specification for describing the structure and semantics
 of objects and their data representations -- a "lingua franca"
-of data. In practice, think supercharged "CREATE TABLE" statement or JSON spec.
+of data. Think supercharged "CREATE TABLE" statement with added
+documentation and attributes.
 
-Anyone can contribute Schemas to the Common Model Repository and help build
-a shared global model of data that tools, libraries, researchers, analysts, databases,
-and apis can use to communicate data frictionlessly.
+The goal of Common Model is a shared global model of data that apis, libraries,
+researchers, analysts, and data warehouses use to communicate data frictionlessly,
+whether publishing api endpoints, aggregating ML training data, or
+curating public datasets.
 
-Whether it's publishing
-or consuming API endpoints, aggregating ML training data, or curating public
-research datasets, Common Model enables global collaboration on data.
+<!--
+As an example, the Common Model Repository defines a `WorldBankCountryIndicator` schema
+that conforms to data from the Worldbank api endpoint for country indicators. Here is
+an abbreviated snippet of that schema -->
 
-The Common Model Repository has core Schemas like:
+Some example common Schemas:
 
 - Country
 - Currency
@@ -27,7 +30,7 @@ The Common Model Repository has core Schemas like:
 - PhoneNumber
 - EndOfDayPrice
 
-and popular third-party ones like:
+and third-party ones:
 
 - WorldBankCountryIndicator
 - StripeCharge
@@ -35,6 +38,8 @@ and popular third-party ones like:
 - ShopifyOrder
 - MailchimpMember
 - SalesforceCustomer
+
+## Spec
 
 A Common Model Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
 
@@ -108,3 +113,19 @@ Examples of fixes requiring a patch version bump:
 
 - Edit the documentation or description
 - Fix typo or other bug
+
+Examples of changes that are not allowed as a version and will be a new Schema:
+
+- Changing the name of a schema
+- Changing the namespace of a schema
+
+Each Common Model Schema is a folder with the current / default version
+at the top level and a 'versions' folder with previous versions suffixed
+with their version number:
+
+- ExampleSchema/
+  - ExampleSchema.yml
+  - versions/
+    - ExampleSchema-1.5.2.yml
+    - ExampleSchema-0.3.0.yml
+    - ExampleSchema-0.0.1.yml
