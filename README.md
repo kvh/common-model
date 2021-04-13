@@ -1,4 +1,4 @@
-![commonmodel-python](https://github.com/kvh/commonmodel/workflows/commonmodel-python/badge.svg)
+![commonmodel-python](https://github.com/kvh/common-model/workflows/commonmodel-python/badge.svg)
 
 # Common Model
 
