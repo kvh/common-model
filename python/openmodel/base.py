@@ -97,6 +97,9 @@ class Schema:
     def field_names(self) -> List[str]:
         return [f.name for f in self.fields]
 
+    def fields_summary(self) -> List[Tuple[str, str]]:
+        return [(f.name, f.field_type.__class__.__name__) for f in self.fields]
+
     @classmethod
     def from_dict(cls, d: Dict) -> Schema:
         fields = []
