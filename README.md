@@ -116,8 +116,8 @@ Examples of fixes requiring a patch version bump:
 
 Examples of changes that are not allowed as a version and will be a new Schema:
 
-- Changing the name of a schema
-- Changing the namespace of a schema
+- Change the name of a schema
+- Change the namespace of a schema
 
 Each Common Model Schema is a folder with the current / default version
 at the top level and a 'versions' folder with previous versions suffixed

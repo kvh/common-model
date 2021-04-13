@@ -119,7 +119,11 @@ class Schema:
         if not self.implementations:
             return None
         for impl in self.implementations:
-            if impl.schema_key == other_key:
+            if (
+                impl.schema_key == other_key
+                or impl.schema_key
+                == other_key.split(".")[-1]  # TODO: fix once we have a "library"
+            ):
                 return impl.as_schema_translation(self.key, other_key)
         return None
 
