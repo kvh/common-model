@@ -290,7 +290,7 @@ def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
 
 AnySchema = Schema(
     name="Any",
-    namespace=None,
+    namespace="core",
     version="0",
     description="The Any root/super schema is compatible with all other Schemas",
     unique_on=[],
