@@ -78,5 +78,6 @@ def test_schema_translation():
 
 
 def test_any_schema():
-    assert AnySchema.name == AnySchema.key == "Any"
+    assert AnySchema.name == "Any"
+    assert AnySchema.key == "core.Any"
     assert AnySchema.fields == []
