@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from typing import Any, Dict, List, Type, Union
+import re
 
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
@@ -233,8 +234,9 @@ DEFAULT_FIELD_TYPE = Text()
 def str_to_field_type(s: str) -> Union[Type[FieldType], FieldType]:
     local_vars = {f().name.lower(): f for f in all_types}
     try:
-        ls = s.lower()
-        ft = eval(ls, {"__builtins__": None}, local_vars)
+        # Parse only type name, discard parentheses
+        ls = re.match(r"^(?P<function>\w+)", s.lower())
+        ft = eval(ls["function"], {"__builtins__": None}, local_vars)
         return ft
     except (AttributeError, TypeError):
         raise NotImplementedError(s)
