@@ -232,11 +232,9 @@ DEFAULT_FIELD_TYPE = Text()
 
 
 def str_to_field_type(s: str) -> Union[Type[FieldType], FieldType]:
-    local_vars = {f().name.lower(): f for f in all_types}
+    local_vars = {f().name: f for f in all_types}
     try:
-        # Parse only type name, discard parentheses
-        ls = re.match(r"^(?P<function>\w+)", s.lower())
-        ft = eval(ls["function"], {"__builtins__": None}, local_vars)
+        ft = eval(s, {"__builtins__": None}, local_vars)
         return ft
     except (AttributeError, TypeError):
         raise NotImplementedError(s)
