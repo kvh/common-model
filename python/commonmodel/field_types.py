@@ -91,7 +91,7 @@ class FieldTypeBase:
         return hash(repr(self))
 
     def get_parameters(self) -> Dict[str, Any]:
-        return self._kwargs
+        return {k: v for k, v in self._kwargs.items() if k in self.parameter_names}
 
     def get_parameter(self, name: str) -> Any:
         return self._kwargs.get(name)
