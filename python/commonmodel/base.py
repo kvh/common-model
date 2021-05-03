@@ -22,6 +22,7 @@ class Field:
         return True
 
 
+# TODO: validator support (NotNull Immutable Min Max ...?? see reference)
 @dataclass(frozen=True)
 class Validator:
     name: str
@@ -56,6 +57,16 @@ class Implementation:
 
 
 @dataclass(frozen=True)
+class FieldRoles:
+    measures: List[str] = field(default_factory=list)
+    dimensions: List[str] = field(default_factory=list)
+    primary_measure: Optional[str] = None
+    primary_dimension: Optional[str] = None
+    creation_ordering: List[str] = field(default_factory=list)
+    modification_ordering: List[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
 class Schema:
     name: str
     namespace: Optional[str]
@@ -63,6 +74,7 @@ class Schema:
     description: str
     unique_on: List[str]
     fields: List[Field]
+    field_roles: FieldRoles = field(default_factory=FieldRoles)
     relations: List[Relation] = field(default_factory=list)
     implementations: List[Implementation] = field(default_factory=list)
     immutable: bool = False
@@ -102,17 +114,7 @@ class Schema:
 
     @classmethod
     def from_dict(cls, d: Dict) -> Schema:
-        fields = []
-        for f in d.get("fields", []):
-            if isinstance(f, dict):
-                f = build_field_from_dict(f)
-            elif isinstance(f, Field):
-                pass
-            else:
-                raise TypeError(f)
-            fields.append(f)
-        d["fields"] = fields
-        return Schema(**d)
+        return build_schema_from_dict(d)
 
     def get_translation_to(self, other: SchemaLike) -> Optional[SchemaTranslation]:
         other_key = schema_like_to_key(other)
@@ -209,28 +211,49 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
 
 def build_schema_from_dict(d: dict, **overrides: Any) -> Schema:
     fields = [build_field_from_dict(f) for f in d.pop("fields", [])]
-    d["implementations"] = [
-        Implementation(schema_key=k, fields=v)
-        for k, v in d.pop("implementations", {}).items()
-    ]
-    d["relations"] = [
-        Relation(name=k, schema_key=v["schema"], fields=v["fields"])
-        for k, v in d.pop("relations", {}).items()
-    ]
+    impls = d.pop("implementations", {})
+    if isinstance(impls, dict):
+        d["implementations"] = [
+            Implementation(schema_key=k, fields=v) for k, v in impls.items()
+        ]
+    else:
+        d["implementations"] = [Implementation(**i) for i in impls]
+    rels = d.pop("relations", {})
+    if isinstance(rels, dict):
+        d["relations"] = [
+            Relation(name=k, schema_key=v["schema"], fields=v["fields"])
+            for k, v in rels.items()
+        ]
+    else:
+        d["relations"] = [Relation(**i) for i in rels]
     d["fields"] = fields
+    d["field_roles"] = build_field_roles_from_dict(d.get("field_roles", {}))
     d.update(**overrides)
     schema = Schema(**d)
     return schema
 
 
 def build_field_from_dict(d: dict) -> Field:
+    if isinstance(d, Field):
+        return d
     d["validators"] = [load_validator_from_dict(f) for f in d.pop("validators", [])]
     d["field_type"] = ensure_field_type(d.get("field_type"))
     f = Field(**d)
     return f
 
 
+def build_field_roles_from_dict(d: Dict) -> FieldRoles:
+    if isinstance(d, FieldRoles):
+        return d
+    for k in ["measures", "dimensions", "creation_ordering", "modification_ordering"]:
+        if k in d:
+            d[k] = d[k] if isinstance(d[k], list) else [d[k]]
+    return FieldRoles(**d)
+
+
 def load_validator_from_dict(v: Union[str, Dict]) -> Validator:
+    if isinstance(v, Validator):
+        return v
     if isinstance(v, str):
         return Validator(name=v)
     elif isinstance(v, dict):

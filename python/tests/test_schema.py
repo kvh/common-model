@@ -3,6 +3,7 @@ from dataclasses import asdict
 
 from commonmodel.base import (
     AnySchema,
+    FieldRoles,
     Implementation,
     Schema,
     Validator,
@@ -30,6 +31,8 @@ fields:
   other_field:
     type: Integer
   short_field: Json
+field_roles:
+  creation_ordering: uniq
 relations:
   other:
     schema: OtherSchema
@@ -46,11 +49,14 @@ def test_schema_yaml():
     assert tt.name == "TestSchema"
     assert tt.version in ("3", 3)  # TODO: strictyaml
     assert tt.key == "_test.TestSchema"
+    assert tt.field_roles == FieldRoles(creation_ordering=["uniq"])
     assert len(tt.fields) == 3
     f1 = tt.get_field("uniq")
     assert f1.field_type == Text(3)
     assert f1.validators == [Validator(name="NotNull")]
     assert f1.is_nullable() is False
+    f2 = tt.get_field("other_field")
+    assert f2.is_nullable()
     assert len(tt.relations) == 1
     rel = tt.relations[0]
     assert rel.schema_key == "OtherSchema"
