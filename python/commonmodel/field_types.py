@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import inspect
-from typing import Any, Dict, List, Type, Union
 import re
+from typing import Any, Dict, List, Type, Union
 
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
@@ -84,6 +83,25 @@ class FieldTypeBase:
             s += f"({kwargs})"
         return s
 
+    @classmethod
+    def __get_validators__(cls):
+        # one or more validators may be yielded which will be called in the
+        # order to validate the input, each validator will receive as an input
+        # the value returned from the previous validator
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v: Any) -> FieldTypeBase:
+        if not isinstance(v, (str, FieldTypeBase, Type)):
+            raise TypeError(type(v))
+        if isinstance(v, str):
+            v = str_to_field_type(v)
+        if isinstance(v, FieldTypeBase):
+            return v
+        if issubclass(v, FieldTypeBase):
+            return v()
+        raise TypeError(type(v))
+
     def __eq__(self, o: FieldTypeBase) -> bool:
         return type(self) is type(o) and self._kwargs == o._kwargs
 
@@ -120,15 +138,15 @@ FieldTypeLike = Union[FieldTypeBase, str]
 
 
 class Boolean(FieldTypeBase):
-    castable_to_types = ["Integer", "Float", "Decimal", "Text", "LongText"]
+    castable_to_types: List[str] = ["Integer", "Float", "Decimal", "Text", "LongText"]
 
 
 class Integer(FieldTypeBase):
-    castable_to_types = ["Float", "Decimal", "Text", "LongText"]
+    castable_to_types: List[str] = ["Flstroat", "Decimal", "Text", "LongText"]
 
 
 class Float(FieldTypeBase):
-    castable_to_types = [
+    castable_to_types: List[str] = [
         "Decimal",  # Kind of true, potential data loss
         "Text",
         "LongText",
@@ -136,9 +154,9 @@ class Float(FieldTypeBase):
 
 
 class Decimal(FieldTypeBase):
-    parameter_names = ["scale", "precision"]
-    defaults = {"scale": 16}
-    castable_to_types = [
+    parameter_names: List[str] = ["scale", "precision"]
+    defaults: Dict[str, Any] = {"scale": 16}
+    castable_to_types: List[str] = [
         "Float",  # Kind of true, potential data loss
         "Text",
         "LongText",
@@ -151,22 +169,22 @@ class Decimal(FieldTypeBase):
 
 
 class Binary(FieldTypeBase):
-    parameter_names = ["length"]
-    castable_to_types = ["LongBinary", "Text", "LongText"]
+    parameter_names: List[str] = ["length"]
+    castable_to_types: List[str] = ["LongBinary", "Text", "LongText"]
 
 
 class LongBinary(FieldTypeBase):
-    parameter_names = ["length"]
-    castable_to_types = ["Text", "LongText"]
+    parameter_names: List[str] = ["length"]
+    castable_to_types: List[str] = ["Text", "LongText"]
 
 
 class Text(FieldTypeBase):
-    parameter_names = ["length"]
-    castable_to_types = ["LongText"]
+    parameter_names: List[str] = ["length"]
+    castable_to_types: List[str] = ["LongText"]
 
 
 class LongText(FieldTypeBase):
-    parameter_names = ["length"]
+    parameter_names: List[str] = ["length"]
 
 
 ##################
@@ -175,17 +193,17 @@ class LongText(FieldTypeBase):
 
 
 class Date(FieldTypeBase):
-    castable_to_types = ["DateTime", "Text", "LongText"]
+    castable_to_types: List[str] = ["DateTime", "Text", "LongText"]
 
 
 class DateTime(FieldTypeBase):
-    castable_to_types = ["Text", "LongText"]
-    parameter_names = ["timezone"]
-    defaults = {"timezone": False}
+    castable_to_types: List[str] = ["Text", "LongText"]
+    parameter_names: List[str] = ["timezone"]
+    defaults: Dict[str, Any] = {"timezone": False}
 
 
 class Time(FieldTypeBase):
-    castable_to_types = ["Text", "LongText"]
+    castable_to_types: List[str] = ["Text", "LongText"]
 
 
 class Interval(FieldTypeBase):

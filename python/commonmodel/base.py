@@ -1,18 +1,23 @@
 from __future__ import annotations
 
-import re
-from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import yaml
 from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
+from commonmodel.utils import FrozenPydanticBase
 
 
-@dataclass(frozen=True)
-class Field:
+# TODO: validator support (NotNull Immutable Min Max ...?? see reference)
+class Validator(FrozenPydanticBase):
+    name: str
+    value: Optional[str] = None
+    parameters: Optional[Dict[str, Any]] = None
+
+
+class Field(FrozenPydanticBase):
     name: str
     field_type: FieldType
-    validators: List[Validator] = field(default_factory=list)
+    validators: List[Validator] = []
     description: Optional[str] = None
 
     def is_nullable(self) -> bool:
@@ -22,27 +27,17 @@ class Field:
         return True
 
 
-# TODO: validator support (NotNull Immutable Min Max ...?? see reference)
-@dataclass(frozen=True)
-class Validator:
-    name: str
-    value: Optional[str] = None
-    parameters: Optional[Dict[str, Any]] = None
-
-
 SchemaKey = str
 SchemaName = str
 
 
-@dataclass(frozen=True)
-class Relation:
+class Relation(FrozenPydanticBase):
     name: str
     schema_key: SchemaKey
     fields: Dict[str, str]
 
 
-@dataclass(frozen=True)
-class Implementation:
+class Implementation(FrozenPydanticBase):
     schema_key: SchemaKey
     fields: Dict[str, str]
 
@@ -56,27 +51,25 @@ class Implementation:
         )
 
 
-@dataclass(frozen=True)
-class FieldRoles:
-    measures: List[str] = field(default_factory=list)
-    dimensions: List[str] = field(default_factory=list)
-    primary_measure: Optional[str] = None
+class FieldRoles(FrozenPydanticBase):
+    measures: List[str] = []
+    dimensions: List[str] = []
+    primary_measure: Optional[str] = None  # TODO: or primary_dimensionS plural?
     primary_dimension: Optional[str] = None
-    creation_ordering: List[str] = field(default_factory=list)
-    modification_ordering: List[str] = field(default_factory=list)
+    creation_ordering: List[str] = []
+    modification_ordering: List[str] = []
 
 
-@dataclass(frozen=True)
-class Schema:
+class Schema(FrozenPydanticBase):
     name: str
     namespace: Optional[str]
     version: Optional[str]
     description: str
     unique_on: List[str]
     fields: List[Field]
-    field_roles: FieldRoles = field(default_factory=FieldRoles)
-    relations: List[Relation] = field(default_factory=list)
-    implementations: List[Implementation] = field(default_factory=list)
+    field_roles: FieldRoles = FieldRoles()
+    relations: List[Relation] = []
+    implementations: List[Implementation] = []
     immutable: bool = False
     raw_definition: Optional[str] = None
     # extends: Optional[
@@ -133,16 +126,10 @@ class Schema:
 SchemaLike = Union[Schema, SchemaKey, SchemaName]
 
 
-class SchemaTranslation:
-    def __init__(
-        self,
-        translation: Optional[Dict[str, str]] = None,
-        from_schema_key: Optional[SchemaKey] = None,
-        to_schema_key: Optional[SchemaKey] = None,
-    ):
-        self.translation = translation
-        self.from_schema_key = from_schema_key
-        self.to_schema_key = to_schema_key
+class SchemaTranslation(FrozenPydanticBase):
+    translation: Optional[Dict[str, str]] = None
+    from_schema_key: Optional[SchemaKey] = None
+    to_schema_key: Optional[SchemaKey] = None
 
     def as_dict(self) -> Dict[str, str]:
         if not self.translation:
@@ -238,6 +225,7 @@ def build_field_from_dict(d: dict) -> Field:
         return d
     d["validators"] = [load_validator_from_dict(f) for f in d.pop("validators", [])]
     d["field_type"] = ensure_field_type(d.get("field_type"))
+    print(d)
     f = Field(**d)
     return f
 

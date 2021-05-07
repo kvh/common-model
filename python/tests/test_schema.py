@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from dataclasses import asdict
 
 from commonmodel.base import (
@@ -69,7 +70,7 @@ def test_schema_yaml():
     assert schema_like_to_name(tt) == "TestSchema"
     assert schema_like_to_key(tt) == "_test.TestSchema"
     assert schema_to_yaml(tt) is not None  # TODO
-    assert asdict(Schema.from_dict(asdict(tt))) == asdict(tt)
+    assert Schema.from_dict(tt.dict()).dict() == tt.dict()
 
 
 def test_schema_translation():
@@ -77,7 +78,9 @@ def test_schema_translation():
     t_impl = create_quick_schema(
         "t_impl",
         fields=[("g1", "Text"), ("g2", "Integer")],
-        implementations=[Implementation("t_base", {"f1": "g1", "f2": "g2"})],
+        implementations=[
+            Implementation(schema_key="t_base", fields={"f1": "g1", "f2": "g2"})
+        ],
     )
     trans = t_impl.get_translation_to(t_base.key)
     assert trans.translation == {"g1": "f1", "g2": "f2"}
