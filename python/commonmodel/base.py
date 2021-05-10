@@ -225,7 +225,6 @@ def build_field_from_dict(d: dict) -> Field:
         return d
     d["validators"] = [load_validator_from_dict(f) for f in d.pop("validators", [])]
     d["field_type"] = ensure_field_type(d.get("field_type"))
-    print(d)
     f = Field(**d)
     return f
 
