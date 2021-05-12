@@ -15,7 +15,7 @@ from commonmodel.base import (
     schema_like_to_name,
     schema_to_yaml,
 )
-from commonmodel.field_types import Text
+from commonmodel.field_types import Json, Text
 
 test_schema_yml = """
 name: TestSchema
@@ -31,7 +31,7 @@ fields:
       - NotNull
   other_field:
     type: Integer
-  short_field: Json
+  short_field: Json NotNull
 field_roles:
   creation_ordering: uniq
 relations:
@@ -71,6 +71,9 @@ def test_schema_yaml():
     assert schema_like_to_key(tt) == "_test.TestSchema"
     assert schema_to_yaml(tt) is not None  # TODO
     assert Schema.from_dict(tt.dict()).dict() == tt.dict()
+    f3 = tt.get_field("short_field")
+    assert f3.field_type == Json()
+    assert f3.validators == [Validator(name="NotNull")]
 
 
 def test_schema_translation():

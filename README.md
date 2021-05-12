@@ -1,18 +1,17 @@
 ![commonmodel-python](https://github.com/kvh/common-model/workflows/commonmodel-python/badge.svg)
 
-# Common Model
+# CommonModel
 
-**A data protocol for the next 70,000 years.**
+**A taxonomy of everything**
 
-Common Model is a shared specification for describing the structure and semantics
+CommonModel is a shared specification for describing the structure and semantics
 of objects and their data representations -- a "lingua franca"
-of data. Think supercharged "CREATE TABLE" statement with added
-documentation and attributes.
+for modeling the world's data. In practice, think supercharged
+"CREATE TABLE" statement.
 
-The goal of Common Model is a shared global model of data that apis, libraries,
-researchers, analysts, and data warehouses use to communicate data frictionlessly,
-whether publishing api endpoints, aggregating ML training data, or
-curating public datasets.
+APIs, libraries, researchers, and analysts can use CommonModel to communicate
+data frictionlessly when publishing api endpoints, aggregating ML training data,
+curating public datasets, or building composable data components.
 
 <!--
 As an example, the Common Model Repository defines a `WorldBankCountryIndicator` schema
@@ -30,7 +29,7 @@ Some example common Schemas:
 - PhoneNumber
 - EndOfDayPrice
 
-and third-party ones:
+and for third-party data:
 
 - WorldBankCountryIndicator
 - StripeCharge
@@ -41,7 +40,7 @@ and third-party ones:
 
 ## Spec
 
-A Common Model Schema provides a single place to describe the properties of an abstract object, its attributes and their types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
+A CommonModel Schema provides a single place to describe the properties of an abstract object, its data types, its relation to other objects, and provide documentation on the details of each. A basic Schema looks like this:
 
 ```yaml
 commonmodel: 0.3.0
@@ -50,8 +49,8 @@ name: Transaction
 namespace: common
 version: 0.1.0
 description: |
-  Represents any commercial transaction of a set amount at a given time, optionally
-  specifying the buyer, seller, currency, and item transacted.
+  Represents any uniquely identified commercial transaction of a set amount at a
+  given time, optionally specifying the buyer, seller, currency, and item transacted.
 immutable: true
 unique_on:
   - id
@@ -72,6 +71,10 @@ implementations:
   common.TimeSeries:
     time: transacted_at
     value: amount
+field_roles:
+  creation_ordering: transacted_at
+  primary_dimensions: [buyer_id, seller_id, item_id]
+  primary_measures: [amount]
 
 documentation:
   schema: |
@@ -82,8 +85,8 @@ documentation:
   fields:
     id: |
       Unique identifier for this transaction, required so that transactions can
-      be deduped accurately. If data does not have a unique identifier, either
-      create one, or use a more basic schema like `common.TimeSeries`.
+      be safely de-duplicated. If data does not have a unique identifier, either
+      create one, or use a more basic schema like `common.Measurement`.
 ```
 
 ## Versioning
@@ -119,7 +122,7 @@ Examples of changes that are not allowed as a version and will be a new Schema:
 - Change the name of a schema
 - Change the namespace of a schema
 
-Each Common Model Schema is a folder with the current / default version
+Each CommonModel Schema is a folder with the current / default version
 at the top level and a 'versions' folder with previous versions suffixed
 with their version number:
 

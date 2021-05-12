@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
+import re
 import yaml
 from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 from commonmodel.utils import FrozenPydanticBase
@@ -171,6 +172,19 @@ def clean_keys(d: dict) -> dict:
     return {k.lower().replace(" ", "_"): v for k, v in d.items()}
 
 
+re_field_expr = re.compile(r"\w+(\([^)]+\))?")
+
+
+def process_field_string_to_dict(f: str) -> Dict:
+    d = {"validators": []}
+    for i, m in enumerate(re_field_expr.finditer(f)):
+        if i == 0:
+            d["type"] = m.group(0)
+        else:
+            d["validators"].append(m.group(0))
+    return d
+
+
 def clean_raw_schema_defintion(raw_def: dict) -> dict:
     """"""
     raw_def = clean_keys(raw_def)
@@ -178,7 +192,7 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     raw_def["fields"] = []
     for name, f in raw_fields.items():
         if isinstance(f, str):
-            f = {"type": f}
+            f = process_field_string_to_dict(f)
         nf = {"name": name, "field_type": f.pop("type", None)}
         nf.update(f)
         raw_def["fields"].append(nf)
