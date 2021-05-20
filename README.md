@@ -2,7 +2,7 @@
 
 # CommonModel
 
-**A taxonomy of everything**
+**The taxonomy of everything**
 
 CommonModel is a shared specification for describing the structure and semantics
 of objects and their data representations -- a "lingua franca"
@@ -72,9 +72,10 @@ implementations:
     time: transacted_at
     value: amount
 field_roles:
+  primary_identifier: id
   creation_ordering: transacted_at
-  primary_dimensions: [buyer_id, seller_id, item_id]
-  primary_measures: [amount]
+  dimensions: [buyer_id, seller_id, item_id]
+  measures: [amount]
 
 documentation:
   schema: |

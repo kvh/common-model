@@ -53,10 +53,11 @@ class Implementation(FrozenPydanticBase):
 
 
 class FieldRoles(FrozenPydanticBase):
+    primary_identifier: Optional[str] = None
     measures: List[str] = []
     dimensions: List[str] = []
-    primary_measure: Optional[str] = None  # TODO: or primary_dimensionS plural?
-    primary_dimension: Optional[str] = None
+    # primary_measure: Optional[str] = None  # TODO: or primary_dimensionS plural? or just use ordering of measures?
+    # primary_dimension: Optional[str] = None
     creation_ordering: List[str] = []
     modification_ordering: List[str] = []
 
@@ -161,6 +162,12 @@ def schema_like_to_key(d: SchemaLike) -> str:
 
 def schema_from_yaml(yml: str, **overrides: Any) -> Schema:
     return schema_from_dict(yaml.load(yml, Loader=yaml.SafeLoader), **overrides)
+
+
+def schema_from_yaml_file(pth: str, **overrides: Any) -> Schema:
+    with open(pth) as f:
+        s = f.read()
+    return schema_from_yaml(s, **overrides)
 
 
 def schema_from_dict(d: Dict[str, Any], **overrides: Any) -> Schema:
