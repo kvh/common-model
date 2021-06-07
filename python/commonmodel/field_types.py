@@ -142,7 +142,7 @@ class Boolean(FieldTypeBase):
 
 
 class Integer(FieldTypeBase):
-    castable_to_types: List[str] = ["Flstroat", "Decimal", "Text", "LongText"]
+    castable_to_types: List[str] = ["Float", "Decimal", "Text", "LongText"]
 
 
 class Float(FieldTypeBase):
