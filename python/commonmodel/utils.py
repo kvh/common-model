@@ -2,8 +2,9 @@ from pydantic import BaseModel
 
 
 class PydanticBase(BaseModel):
-    class Config:
-        extra = "forbid"
+    pass
+    # class Config:
+    #     extra = "forbid"
 
 
 class FrozenPydanticBase(PydanticBase):
