@@ -154,8 +154,8 @@ class Float(FieldTypeBase):
 
 
 class Decimal(FieldTypeBase):
-    parameter_names: List[str] = ["scale", "precision"]
-    defaults: Dict[str, Any] = {"scale": 16}
+    parameter_names: List[str] = ["precision", "scale"]
+    defaults: Dict[str, Any] = {"precision": 16, "scale": 6}
     castable_to_types: List[str] = [
         "Float",  # Kind of true, potential data loss
         "Text",
