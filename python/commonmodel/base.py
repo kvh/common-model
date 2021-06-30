@@ -1,4 +1,5 @@
 from __future__ import annotations
+from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
@@ -164,7 +165,7 @@ def schema_from_yaml(yml: str, **overrides: Any) -> Schema:
     return schema_from_dict(yaml.load(yml, Loader=yaml.SafeLoader), **overrides)
 
 
-def schema_from_yaml_file(pth: str, **overrides: Any) -> Schema:
+def schema_from_yaml_file(pth: Union[str, Path], **overrides: Any) -> Schema:
     with open(pth) as f:
         s = f.read()
     return schema_from_yaml(s, **overrides)
