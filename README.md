@@ -1,5 +1,3 @@
-![commonmodel-python](https://github.com/kvh/common-model/workflows/commonmodel-python/badge.svg)
-
 # CommonModel
 
 **The taxonomy of everything**
