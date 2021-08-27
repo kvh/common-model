@@ -1,0 +1,92 @@
+name: CrunchbasePerson
+namespace: crunchbase
+version: 1
+description: Crunchbase Person Object
+unique_on:
+  - uuid
+immutable: false
+fields:
+  address:
+    type: Text
+  alias_1:
+    type: Text
+  alias_2:
+    type: Text
+  alias_3:
+    type: Text
+  category_groups_list:
+    type: Text
+  category_list:
+    type: Text
+  cb_url:
+    type: Text
+  city:
+    type: Text
+  closed_on:
+    type: Text
+  country_code:
+    type: Text
+  created_at:
+    type: DateTime
+  domain:
+    type: Text
+  email:
+    type: Text
+  employee_count:
+    type: Text
+  facebook_url:
+    type: Text
+  founded_on:
+    type: Date
+  homepage_url:
+    type: Text
+  last_funding_on:
+    type: Text
+  legal_name:
+    type: Text
+  linkedin_url:
+    type: Text
+  logo_url:
+    type: Text
+  name:
+    type: Text
+  num_exits:
+    type: Text
+  num_funding_rounds:
+    type: Text
+  permalink:
+    type: Text
+  phone:
+    type: Text
+  postal_code:
+    type: Integer
+  primary_role:
+    type: Text
+  rank:
+    type: Float
+  region:
+    type: Text
+  revenue_range:
+    type: Text
+  roles:
+    type: Text
+  short_description:
+    type: Text
+  state_code:
+    type: Text
+  status:
+    type: Text
+  total_funding:
+    type: Text
+  total_funding_currency_code:
+    type: Text
+  total_funding_usd:
+    type: Text
+  twitter_url:
+    type: Text
+  type:
+    type: Text
+  updated_at:
+    type: DateTime(timezone=False)
+  uuid:
+    type: Text

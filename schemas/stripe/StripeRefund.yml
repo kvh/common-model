@@ -1,0 +1,38 @@
+name: StripeRefundRaw
+namespace: stripe
+version: 0.1.0
+description: Stripe refund object
+unique_on:
+  - id
+immutable: False
+fields:
+  amount:
+    type: Integer
+  balance_transaction:
+    type: Text(length=255)
+  charge:
+    type: Text(length=255)
+  created:
+    type: Integer
+  currency:
+    type: Text(length=255)
+  id:
+    type: Text(length=255)
+    validators:
+      - NotNull
+  metadata:
+    type: Json
+  object:
+    type: Text(length=255)
+  payment_intent:
+    type: Text(length=255)
+  reason:
+    type: Text(length=255)
+  receipt_number:
+    type: Text(length=255)
+  source_transfer_reversal:
+    type: Text(length=255)
+  status:
+    type: Text(length=255)
+  transfer_reversal:
+    type: Text(length=255)

@@ -1,0 +1,128 @@
+name: AlphavantageCompanyOverview
+namespace: alphavantage
+version: 1.0
+description: Overview of company financial and equity metrics from latest reported quarter, from Alphavantage
+unique_on:
+  - symbol
+immutable: False
+fields:
+  symbol:
+    type: Text
+  asset_type:
+    type: Text
+  name:
+    type: Text
+  description:
+    type: Text
+  cik:
+    type: Integer
+  exchange:
+    type: Text
+  currency:
+    type: Text
+  country:
+    type: Text
+  sector:
+    type: Text
+  industry:
+    type: Text
+  address:
+    type: Text
+  full_time_employees:
+    type: Integer
+  fiscal_year_end:
+    type: Text
+  latest_quarter:
+    type: DateTime
+  market_capitalization:
+    type: Integer
+  ebitda:
+    type: Integer
+  pe_ratio:
+    type: Float
+  peg_ratio:
+    type: Float
+  book_value:
+    type: Float
+  dividend_per_share:
+    type: Float
+  dividend_yield:
+    type: Float
+  eps:
+    type: Float
+  revenue_per_share_ttm:
+    type: Float
+  profit_margin:
+    type: Float
+  operating_margin_ttm:
+    type: Float
+  return_on_assets_ttm:
+    type: Float
+  return_on_equity_ttm:
+    type: Float
+  revenue_ttm:
+    type: Integer
+  gross_profit_ttm:
+    type: Integer
+  diluted_epsttm:
+    type: Float
+  quarterly_earnings_growth_yoy:
+    type: Float
+  quarterly_revenue_growth_yoy:
+    type: Float
+  analyst_target_price:
+    type: Float
+  trailing_pe:
+    type: Float
+  forward_pe:
+    type: Float
+  price_to_sales_ratio_ttm:
+    type: Float
+  price_to_book_ratio:
+    type: Float
+  ev_to_revenue:
+    type: Float
+  ev_to_ebitda:
+    type: Float
+  beta:
+    type: Float
+  52_week_high:
+    type: Float
+  52_week_low:
+    type: Float
+  50_day_moving_average:
+    type: Float
+  200_day_moving_average:
+    type: Float
+  shares_outstanding:
+    type: Integer
+  shares_float:
+    type: Integer
+  shares_short:
+    type: Integer
+  shares_short_prior_month:
+    type: Integer
+  short_ratio:
+    type: Float
+  short_percent_outstanding:
+    type: Float
+  short_percent_float:
+    type: Float
+  percent_insiders:
+    type: Float
+  percent_institutions:
+    type: Float
+  forward_annual_dividend_rate:
+    type: Float
+  forward_annual_dividend_yield:
+    type: Float
+  payout_ratio:
+    type: Float
+  dividend_date:
+    type: DateTime
+  ex_dividend_date:
+    type: DateTime
+  last_split_factor:
+    type: Text
+  last_split_date:
+    type: DateTime

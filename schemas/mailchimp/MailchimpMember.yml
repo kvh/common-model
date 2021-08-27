@@ -1,0 +1,16 @@
+name: MailchimpMember
+namespace: mailchimp
+version: 1
+description: Mailchimp member (contact)
+unique_on:
+  - email_address
+immutable: true
+fields:
+  email_address:
+    type: Text
+    validators:
+      - NotNull
+  status:
+    type: Text
+  merge_fields:
+    type: Json

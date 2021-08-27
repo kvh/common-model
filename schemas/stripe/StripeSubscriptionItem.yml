@@ -1,0 +1,32 @@
+name: StripeSubscriptionItemRaw
+namespace: stripe
+version: 1.0
+description: Stripe raw Subscription Item object
+unique_on:
+  - id
+immutable: False
+fields:
+  billing_thresholds:
+    type: Text(length=255)
+  created:
+    type: Integer
+  id:
+    type: Text(length=255)
+    validators:
+      - NotNull
+  metadata:
+    type: Json
+  object:
+    type: Text(length=255)
+  plan:
+    type: Json
+  price:
+    type: Json
+  quantity:
+    type: Integer
+  subscription:
+    type: Text(length=255)
+  tax_rates:
+    type: Json
+field_roles:
+  creation_ordering: created

@@ -1,0 +1,108 @@
+name: BigCommerceOrderProduct
+namespace: bigcommerce
+version: 1.0
+description: BigCommerce product on an order
+unique_on:
+  - id
+immutable: False
+fields:
+  id:
+    type: Integer
+    validators:
+      - NotNull
+  product_id:
+    type: Integer
+    validators:
+      - NotNull
+  order_id:
+    type: Integer
+    validators:
+      - NotNull
+  applied_discounts:
+    type: Json
+  base_cost_price:
+    type: Float
+  base_price:
+    type: Float
+  base_total:
+    type: Float
+  base_wrapping_cost:
+    type: Float
+  bin_picking_number:
+    type: Text(length=255)
+  configurable_fields:
+    type: Json
+  cost_price_ex_tax:
+    type: Float
+  cost_price_inc_tax:
+    type: Float
+  cost_price_tax:
+    type: Float
+  ebay_item_id:
+    type: Text(length=255)
+  ebay_transaction_id:
+    type: Text(length=255)
+  external_id:
+    type: Text(length=255)
+  fixed_shipping_cost:
+    type: Float
+  fulfillment_source:
+    type: Text(length=255)
+  is_bundled_product:
+    type: Boolean
+  is_refunded:
+    type: Boolean
+  name:
+    type: Text(length=255)
+  name_customer:
+    type: Text(length=255)
+  name_merchant:
+    type: Text(length=255)
+  option_set_id:
+    type: Integer
+  order_address_id:
+    type: Integer
+  parent_order_product_id:
+    type: Text(length=255)
+  price_ex_tax:
+    type: Float
+  price_inc_tax:
+    type: Float
+  price_tax:
+    type: Float
+  product_options:
+    type: Json
+  quantity:
+    type: Integer
+  quantity_refunded:
+    type: Integer
+  quantity_shipped:
+    type: Integer
+  refund_amount:
+    type: Float
+  return_id:
+    type: Integer
+  sku:
+    type: Text(length=255)
+  total_ex_tax:
+    type: Float
+  total_inc_tax:
+    type: Float
+  total_tax:
+    type: Float
+  type:
+    type: Text(length=255)
+  upc:
+    type: Integer
+  weight:
+    type: Float
+  wrapping_cost_ex_tax:
+    type: Float
+  wrapping_cost_inc_tax:
+    type: Float
+  wrapping_cost_tax:
+    type: Float
+  wrapping_message:
+    type: Text(length=255)
+  wrapping_name:
+    type: Text(length=255)

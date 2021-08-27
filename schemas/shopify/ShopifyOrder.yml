@@ -1,0 +1,156 @@
+name: ShopifyOrder
+namespace: shopify
+version: 1
+description: Shopify order
+unique_on:
+  - id
+immutable: false
+fields:
+  id:
+    type: Integer
+    validators:
+      - NotNull
+  admin_graphql_api_id:
+    type: Text
+  app_id:
+    type: Integer
+  billing_address:
+    type: Json
+  browser_ip:
+    type: Text
+  buyer_accepts_marketing:
+    type: Boolean
+  cancel_reason:
+    type: Text
+  cancelled_at:
+    type: DateTime
+  cart_token:
+    type: Text
+  checkout_id:
+    type: Integer
+  checkout_token:
+    type: Text
+  client_details:
+    type: Json
+  closed_at:
+    type: DateTime
+  confirmed:
+    type: Boolean
+  contact_email:
+    type: Text
+  created_at:
+    type: DateTime
+  currency:
+    type: Text
+  customer:
+    type: Json
+  customer_locale:
+    type: Text
+  device_id:
+    type: Text
+  discount_applications:
+    type: Json
+  discount_codes:
+    type: Json
+  email:
+    type: Text
+  financial_status:
+    type: Text
+  fulfillment_status:
+    type: Text
+  fulfillments:
+    type: Json
+  gateway:
+    type: Text
+  landing_site:
+    type: Text(1024)
+  landing_site_ref:
+    type: Text
+  line_items:
+    type: Json
+  location_id:
+    type: Text
+  name:
+    type: Text
+  note:
+    type: Text
+  note_attributes:
+    type: Json
+  number:
+    type: Integer
+  order_number:
+    type: Integer
+  order_status_url:
+    type: Text
+  payment_details:
+    type: Json
+  payment_gateway_names:
+    type: Json
+  phone:
+    type: Text
+  point_of_sale_user_id:
+    type: Text
+  presentment_currency:
+    type: Text
+  processed_at:
+    type: DateTime
+  processing_method:
+    type: Text
+  reference:
+    type: Text
+  referring_site:
+    type: Text
+  refunds:
+    type: Json
+  shipping_address:
+    type: Json
+  shipping_lines:
+    type: Json
+  source_identifier:
+    type: Text
+  source_name:
+    type: Text
+  source_url:
+    type: Text
+  subtotal_price:
+    type: Decimal(9,2)
+  subtotal_price_set:
+    type: Json
+  tags:
+    type: Text
+  tax_lines:
+    type: Json
+  taxes_included:
+    type: Boolean
+  test:
+    type: Boolean
+  token:
+    type: Text
+  total_discounts:
+    type: Decimal(9,2)
+  total_discounts_set:
+    type: Json
+  total_line_items_price:
+    type: Decimal(9,2)
+  total_line_items_price_set:
+    type: Json
+  total_price:
+    type: Decimal(9,2)
+  total_price_set:
+    type: Json
+  total_price_usd:
+    type: Decimal(9,2)
+  total_shipping_price_set:
+    type: Json
+  total_tax:
+    type: Decimal(9,2)
+  total_tax_set:
+    type: Json
+  total_tip_received:
+    type: Decimal(9,2)
+  total_weight:
+    type: Integer
+  updated_at:
+    type: DateTime
+  user_id:
+    type: Integer

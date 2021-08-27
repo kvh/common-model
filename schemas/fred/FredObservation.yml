@@ -1,0 +1,22 @@
+name: FredObservation
+namespace: fred
+version: 1
+description: >
+  An observation from a FRED economic series.
+unique_on:
+  - series_id
+  - date
+immutable: false
+fields:
+  series_id:
+    type: Text
+    validators:
+      - NotNull
+  realtime_start:
+    type: Date
+  realtime_end:
+    type: Date
+  date:
+    type: Date
+  value:
+    type: Decimal(18, 6)

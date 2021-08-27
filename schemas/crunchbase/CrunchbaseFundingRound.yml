@@ -1,0 +1,56 @@
+name: CrunchbaseFundingRound
+namespace: crunchbase
+version: 1
+description: Crunchbase Funding Round Object
+unique_on:
+  - uuid
+immutable: false
+fields:
+  announced_on:
+    type: Date
+  cb_url:
+    type: Text
+  city:
+    type: Text
+  country_code:
+    type: Text
+  created_at:
+    type: DateTime(timezone=False)
+  investment_type:
+    type: Text
+  investor_count:
+    type: Float
+  lead_investor_uuids:
+    type: Text
+  name:
+    type: Text
+  org_name:
+    type: Text
+  org_uuid:
+    type: Text
+  permalink:
+    type: Text
+  post_money_valuation:
+    type: Text
+  post_money_valuation_currency_code:
+    type: Text
+  post_money_valuation_usd:
+    type: Text
+  raised_amount:
+    type: Float
+  raised_amount_currency_code:
+    type: Text
+  raised_amount_usd:
+    type: Float
+  rank:
+    type: Float
+  region:
+    type: Text
+  state_code:
+    type: Text
+  type:
+    type: Text
+  updated_at:
+    type: DateTime(timezone=False)
+  uuid:
+    type: Text

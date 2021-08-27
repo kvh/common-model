@@ -1,0 +1,146 @@
+name: BigCommerceOrder
+namespace: bigcommerce
+version: 1
+description: BigCommerce Order Object
+unique_on:
+  - id
+immutable: false
+fields:
+  base_handling_cost:
+    type: Float
+  base_shipping_cost:
+    type: Float
+  base_wrapping_cost:
+    type: Float
+  billing_address:
+    type: Json
+  cart_id:
+    type: Text(length=255)
+  channel_id:
+    type: Integer
+  coupon_discount:
+    type: Float
+  coupons:
+    type: Json
+  credit_card_type:
+    type: Text(length=255)
+  currency_code:
+    type: Text(length=255)
+  currency_exchange_rate:
+    type: Float
+  currency_id:
+    type: Integer
+  custom_status:
+    type: Text(length=255)
+  customer_id:
+    type: Integer
+  customer_locale:
+    type: Text(length=255)
+  customer_message:
+    type: Text(length=255)
+  date_created:
+    type: Date
+  date_modified:
+    type: Date
+  date_shipped:
+    type: Text(length=255)
+  default_currency_code:
+    type: Text(length=255)
+  default_currency_id:
+    type: Integer
+  discount_amount:
+    type: Float
+  ebay_order_id:
+    type: Integer
+  external_id:
+    type: Text(length=255)
+  external_merchant_id:
+    type: Text(length=255)
+  external_source:
+    type: Text(length=255)
+  geoip_country:
+    type: Text(length=255)
+  geoip_country_iso_2:
+    type: Text(length=255)
+  gift_certificate_amount:
+    type: Float
+  handling_cost_ex_tax:
+    type: Float
+  handling_cost_inc_tax:
+    type: Float
+  handling_cost_tax:
+    type: Float
+  handling_cost_tax_class_id:
+    type: Integer
+  id:
+    type: Integer
+  ip_address:
+    type: Text(length=255)
+  is_deleted:
+    type: Boolean
+  is_email_opt_in:
+    type: Boolean
+  items_shipped:
+    type: Integer
+  items_total:
+    type: Integer
+  order_is_digital:
+    type: Boolean
+  order_source:
+    type: Text(length=255)
+  payment_method:
+    type: Text(length=255)
+  payment_provider_id:
+    type: Text(length=255)
+  payment_status:
+    type: Text(length=255)
+  products:
+    type: Json
+  refunded_amount:
+    type: Float
+  shipping_address_count:
+    type: Integer
+  shipping_addresses:
+    type: Json
+  shipping_cost_ex_tax:
+    type: Float
+  shipping_cost_inc_tax:
+    type: Float
+  shipping_cost_tax:
+    type: Float
+  shipping_cost_tax_class_id:
+    type: Integer
+  staff_notes:
+    type: Text(length=255)
+  status:
+    type: Text(length=255)
+  status_id:
+    type: Integer
+  store_credit_amount:
+    type: Float
+  store_default_currency_code:
+    type: Text(length=255)
+  store_default_to_transactional_exchange_rate:
+    type: Float
+  subtotal_ex_tax:
+    type: Float
+  subtotal_inc_tax:
+    type: Float
+  subtotal_tax:
+    type: Float
+  tax_provider_id:
+    type: Text(length=255)
+  total_ex_tax:
+    type: Float
+  total_inc_tax:
+    type: Float
+  total_tax:
+    type: Float
+  wrapping_cost_ex_tax:
+    type: Float
+  wrapping_cost_inc_tax:
+    type: Float
+  wrapping_cost_tax:
+    type: Float
+  wrapping_cost_tax_class_id:
+    type: Integer

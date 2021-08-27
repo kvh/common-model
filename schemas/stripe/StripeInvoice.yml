@@ -1,0 +1,140 @@
+name: StripeInvoiceRaw
+namespace: stripe
+version: 1.0
+description: Stripe raw Invoice object
+unique_on:
+  - id
+immutable: False
+fields:
+  account_country:
+    type: Text(length=255)
+  account_name:
+    type: Text(length=255)
+  account_tax_ids:
+    type: Text(length=255)
+  amount_due:
+    type: Integer
+  amount_paid:
+    type: Integer
+  amount_remaining:
+    type: Integer
+  application_fee_amount:
+    type: Text(length=255)
+  attempt_count:
+    type: Integer
+  attempted:
+    type: Boolean
+  auto_advance:
+    type: Boolean
+  billing_reason:
+    type: Text(length=255)
+  charge:
+    type: Text(length=255)
+  collection_method:
+    type: Text(length=255)
+  created:
+    type: Integer
+  currency:
+    type: Text(length=255)
+  custom_fields:
+    type: Text(length=255)
+  customer:
+    type: Text(length=255)
+  customer_address:
+    type: Text(length=255)
+  customer_email:
+    type: Text(length=255)
+  customer_name:
+    type: Text(length=255)
+  customer_phone:
+    type: Text(length=255)
+  customer_shipping:
+    type: Text(length=255)
+  customer_tax_exempt:
+    type: Text(length=255)
+  customer_tax_ids:
+    type: Json
+  default_payment_method:
+    type: Text(length=255)
+  default_source:
+    type: Text(length=255)
+  default_tax_rates:
+    type: Json
+  description:
+    type: Text(length=255)
+  discount:
+    type: Text(length=255)
+  discounts:
+    type: Json
+  due_date:
+    type: Text(length=255)
+  ending_balance:
+    type: Integer
+  footer:
+    type: Text(length=255)
+  hosted_invoice_url:
+    type: Text(length=255)
+  id:
+    type: Text(length=255)
+    validators:
+      - NotNull
+  invoice_pdf:
+    type: Text(length=255)
+  last_finalization_error:
+    type: Text(length=255)
+  lines:
+    type: Json
+  livemode:
+    type: Boolean
+  metadata:
+    type: Json
+  next_payment_attempt:
+    type: Text(length=255)
+  number:
+    type: Text(length=255)
+  object:
+    type: Text(length=255)
+  on_behalf_of:
+    type: Text(length=255)
+  paid:
+    type: Boolean
+  payment_intent:
+    type: Text(length=255)
+  payment_settings:
+    type: Json
+  period_end:
+    type: Integer
+  period_start:
+    type: Integer
+  post_payment_credit_notes_amount:
+    type: Integer
+  pre_payment_credit_notes_amount:
+    type: Integer
+  receipt_number:
+    type: Text(length=255)
+  starting_balance:
+    type: Integer
+  statement_descriptor:
+    type: Text(length=255)
+  status:
+    type: Text(length=255)
+  status_transitions:
+    type: Json
+  subscription:
+    type: Text(length=255)
+  subtotal:
+    type: Integer
+  tax:
+    type: Text(length=255)
+  tax_percent:
+    type: Text(length=255)
+  total:
+    type: Integer
+  total_discount_amounts:
+    type: Json
+  total_tax_amounts:
+    type: Json
+  transfer_data:
+    type: Text(length=255)
+  webhooks_delivered_at:
+    type: Integer

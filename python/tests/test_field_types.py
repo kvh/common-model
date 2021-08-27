@@ -35,9 +35,9 @@ def test_instantiation():
 
 def test_repr():
     assert repr(Text(length=255)) == "Text(length=255)"
-    assert repr(Decimal()) == "Decimal(scale=16)"
-    assert repr(Decimal(10)) == "Decimal(scale=10)"
-    assert repr(Decimal(16, 2)) == "Decimal(scale=16, precision=2)"
+    assert repr(Decimal()) == "Decimal(precision=16, scale=6)"
+    assert repr(Decimal(10)) == "Decimal(precision=10, scale=6)"
+    assert repr(Decimal(16, 2)) == "Decimal(precision=16, scale=2)"
 
 
 @pytest.mark.parametrize(
@@ -48,7 +48,7 @@ def test_repr():
         ("Text(3)", Text(length=3)),
         ("DateTime", DateTime),
         ("DateTime(timezone=False)", DateTime(timezone=False)),
-        ("Decimal(scale=16, precision=2)", Decimal(16, 2)),
+        ("Decimal(precision=16, scale=2)", Decimal(16, 2)),
     ],
 )
 def test_str_to_field_types(s: str, expected: Union[FieldType, Type[FieldType]]):

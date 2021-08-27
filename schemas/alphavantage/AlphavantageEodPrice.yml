@@ -1,0 +1,37 @@
+name: AlphavantageEodPrice
+namespace: alphavantage
+version: 1
+description: End-of-day prices from Alphavantage
+unique_on:
+  - symbol
+  - timestamp
+immutable: true
+fields:
+  symbol:
+    type: Text
+    validators:
+      - NotNull
+  timestamp:
+    type: Date
+    validators:
+      - NotNull
+  open:
+    type: Decimal(12,4)
+  close:
+    type: Decimal(12,4)
+  high:
+    type: Decimal(12,4)
+  low:
+    type: Decimal(12,4)
+  adjusted_close:
+    type: Decimal(12,4)
+  volume:
+    type: Decimal(24,4)
+  dividend_amount:
+    type: Decimal(12,4)
+  split_coefficient:
+    type: Decimal(12,4)
+implementations:
+  EodPrice:
+    date: timestamp
+    adj_close: adjusted_close

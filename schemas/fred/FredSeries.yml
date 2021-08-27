@@ -1,0 +1,43 @@
+name: FredSeries
+namespace: fred
+version: 1
+description: >
+  Metadata for a FRED economic series.
+unique_on:
+  - id
+immutable: false
+fields:
+  id:
+    type: Text
+    validators:
+      - NotNull
+  frequency:
+    type: Text
+  frequency_short:
+    type: Text
+  group_popularity:
+    type: Integer
+  last_updated:
+    type: DateTime
+  notes:
+    type: LongText
+  observation_end:
+    type: DateTime
+  observation_start:
+    type: DateTime
+  popularity:
+    type: Integer
+  realtime_end:
+    type: DateTime
+  realtime_start:
+    type: DateTime
+  seasonal_adjustment:
+    type: Text
+  seasonal_adjustment_short:
+    type: Text
+  title:
+    type: Text
+  units:
+    type: Text
+  units_short:
+    type: Text

@@ -1,0 +1,17 @@
+name: Ticker
+namespace: stocks
+version: 1
+description: Stock ticker and metadata
+unique_on:
+  - symbol
+  - exchange
+immutable: false
+fields:
+  symbol:
+    type: Text
+    validators:
+      - NotNull
+  name:
+    type: Text
+  exchange:
+    type: Text

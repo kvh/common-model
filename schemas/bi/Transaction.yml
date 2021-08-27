@@ -1,0 +1,21 @@
+name: Transaction
+namespace: bi
+version: 1
+description: >
+  A customer transaction at a specific time for a specific amount, for an optionally specified product
+immutable: true
+fields:
+  customer_id:
+    type: Text
+    validators:
+      - NotNull
+  product_id:
+    type: Text
+  transacted_at:
+    type: DateTime
+    validators:
+      - NotNull
+  amount:
+    type: Decimal(12, 2)
+    validators:
+      - NotNull

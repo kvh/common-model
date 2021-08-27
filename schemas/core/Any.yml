@@ -1,0 +1,5 @@
+name: Any
+namespace: core
+version: 0
+description: >
+  The Any root/super schema is compatible with all other Schemas

@@ -1,0 +1,84 @@
+name: StripeSubscriptionRaw
+namespace: stripe
+version: 1.0
+description: Stripe raw Subscription object
+unique_on:
+  - id
+immutable: False
+fields:
+  id:
+    type: Text(length=255)
+    validators:
+      - NotNull
+  application_fee_percent:
+    type: Text(length=255)
+  billing_cycle_anchor:
+    type: Integer
+  billing_thresholds:
+    type: Text(length=255)
+  cancel_at:
+    type: Text(length=255)
+  cancel_at_period_end:
+    type: Boolean
+  canceled_at:
+    type: Text(length=255)
+  collection_method:
+    type: Text(length=255)
+  created:
+    type: Integer
+  current_period_end:
+    type: Integer
+  current_period_start:
+    type: Integer
+  customer:
+    type: Text(length=255)
+  days_until_due:
+    type: Text(length=255)
+  default_payment_method:
+    type: Text(length=255)
+  default_source:
+    type: Text(length=255)
+  default_tax_rates:
+    type: Json
+  discount:
+    type: Text(length=255)
+  ended_at:
+    type: Text(length=255)
+  items:
+    type: Json
+  latest_invoice:
+    type: Text(length=255)
+  livemode:
+    type: Boolean
+  metadata:
+    type: Json
+  next_pending_invoice_item_invoice:
+    type: Text(length=255)
+  object:
+    type: Text(length=255)
+  pause_collection:
+    type: Text(length=255)
+  pending_invoice_item_interval:
+    type: Text(length=255)
+  pending_setup_intent:
+    type: Text(length=255)
+  pending_update:
+    type: Text(length=255)
+  plan:
+    type: Json
+  quantity:
+    type: Integer
+  schedule:
+    type: Text(length=255)
+  start_date:
+    type: Integer
+  status:
+    type: Text(length=255)
+  tax_percent:
+    type: Text(length=255)
+  transfer_data:
+    type: Text(length=255)
+  trial_end:
+    type: Text(length=255)
+  trial_start:
+    type: Text(length=255)

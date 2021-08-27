@@ -1,11 +1,10 @@
 # CommonModel
 
-**The taxonomy of everything**
+**Universal schemas for structured data**
 
 CommonModel is a shared specification for describing the structure and semantics
 of objects and their data representations -- a "lingua franca"
-for modeling the world's data. In practice, think supercharged
-"CREATE TABLE" statement.
+for modeling the world's data.
 
 APIs, libraries, researchers, and analysts can use CommonModel to communicate
 data frictionlessly when publishing api endpoints, aggregating ML training data,
