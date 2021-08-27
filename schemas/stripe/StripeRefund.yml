@@ -1,4 +1,4 @@
-name: StripeRefundRaw
+name: StripeRefund
 namespace: stripe
 version: 0.1.0
 description: Stripe refund object

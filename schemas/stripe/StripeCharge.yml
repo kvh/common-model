@@ -1,7 +1,7 @@
-name: StripeChargeRaw
+name: StripeCharge
 namespace: stripe
 version: 1
-description: Raw Stripe charge object (no values modified)
+description: Stripe charge object (no values modified)
 unique_on:
   - id
 immutable: false

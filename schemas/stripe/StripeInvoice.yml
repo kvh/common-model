@@ -1,7 +1,7 @@
-name: StripeInvoiceRaw
+name: StripeInvoice
 namespace: stripe
 version: 1.0
-description: Stripe raw Invoice object
+description: Stripe Invoice object
 unique_on:
   - id
 immutable: False

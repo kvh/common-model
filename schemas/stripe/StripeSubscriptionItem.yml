@@ -1,7 +1,7 @@
-name: StripeSubscriptionItemRaw
+name: StripeSubscriptionItem
 namespace: stripe
 version: 1.0
-description: Stripe raw Subscription Item object
+description: Stripe Subscription Item object
 unique_on:
   - id
 immutable: False
