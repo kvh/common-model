@@ -10,7 +10,7 @@ pyroot = Path(__file__).parent
 
 def register_schema(schema: Schema):
     schema_cache[schema.key] = schema
-    namespace_lookup[schema.name].append(schema.key)
+    namespace_lookup.setdefault(schema.name, []).append(schema.key)
 
 
 def get_highest_precedence(keys: List[str], namespace_precedence: List[str]) -> str:
