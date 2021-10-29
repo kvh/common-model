@@ -4,14 +4,14 @@ description = "Universal Data Schemas"
 license = "BSD-3-Clause"
 name = "common-model"
 packages = [
-  {include = "commonmodel"},
+  {include = "python/commonmodel"},
 ]
 version = "0.2.0"
 
 [tool.poetry.dependencies]
-PyYAML = "^5.4.1"
-pydantic = "^1.8.1"
-python = "^3.7"
+PyYAML = ">= 5.4.1"
+pydantic = ">= 1.8.1"
+python = ">= 3.7"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
