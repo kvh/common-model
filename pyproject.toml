@@ -4,7 +4,7 @@ description = "Universal Data Schemas"
 license = "BSD-3-Clause"
 name = "common-model"
 packages = [
-  {include = "python/commonmodel"},
+  {include = "commonmodel", from = "python"},
 ]
 version = "0.2.0"
 
