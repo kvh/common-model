@@ -4,9 +4,9 @@ description = "Universal Data Schemas"
 license = "BSD-3-Clause"
 name = "common-model"
 packages = [
-  {include = "commonmodel", from = "python"},
+  {include = "commonmodel"},
 ]
-version = "0.2.1"
+version = "0.2.2"
 
 [tool.poetry.dependencies]
 PyYAML = ">= 5.4.1"

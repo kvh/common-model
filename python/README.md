@@ -1,1 +1,0 @@
-# Common Model Python library
