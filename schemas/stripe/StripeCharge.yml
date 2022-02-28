@@ -99,4 +99,4 @@ fields:
   transfer_group:
     type: Text
 field_roles:
-  creation_ordering: created
+  created_ordering: created

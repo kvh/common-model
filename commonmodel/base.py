@@ -59,8 +59,8 @@ class FieldRoles(FrozenPydanticBase):
     dimensions: List[str] = []
     # primary_measure: Optional[str] = None  # TODO: or primary_dimensionS plural? or just use ordering of measures?
     # primary_dimension: Optional[str] = None
-    creation_ordering: List[str] = []
-    modification_ordering: List[str] = []
+    created_ordering: List[str] = []
+    updated_ordering: List[str] = []
 
 
 class Schema(FrozenPydanticBase):
@@ -79,11 +79,6 @@ class Schema(FrozenPydanticBase):
     #     SchemaKey
     # ] = None  # TODO: TBD how useful this would be, or exactly how it would work
     primary_dimension: Optional[str] = None  # TODO: TBD if we want this
-    dimensions: Optional[List[str]] = None
-    facts: Optional[List[str]] = None
-    # expected_cardinality: Optional[
-    #     int
-    # ] = None  # Used if semantics imply a cardinality (Country ~300, or Date ~10000, for instance)
     field_lookup: Optional[Dict[str, Field]] = None
     commonmodel: Optional[str] = None  # commonmodel spec version
     documentation: Optional[Dict[str, Union[str, Dict[str, str]]]] = None
@@ -254,7 +249,7 @@ def build_field_from_dict(d: dict) -> Field:
 def build_field_roles_from_dict(d: Dict) -> FieldRoles:
     if isinstance(d, FieldRoles):
         return d
-    for k in ["measures", "dimensions", "creation_ordering", "modification_ordering"]:
+    for k in ["measures", "dimensions", "created_ordering", "updated_ordering"]:
         if k in d:
             d[k] = d[k] if isinstance(d[k], list) else [d[k]]
     return FieldRoles(**d)

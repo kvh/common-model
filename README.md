@@ -70,7 +70,7 @@ implementations:
     value: amount
 field_roles:
   primary_identifier: id
-  creation_ordering: transacted_at
+  created_ordering: transacted_at
   dimensions: [buyer_id, seller_id, item_id]
   measures: [amount]
 

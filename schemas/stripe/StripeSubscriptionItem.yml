@@ -29,4 +29,4 @@ fields:
   tax_rates:
     type: Json
 field_roles:
-  creation_ordering: created
+  created_ordering: created

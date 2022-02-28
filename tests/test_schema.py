@@ -33,7 +33,7 @@ fields:
     type: Integer
   short_field: Json NotNull
 field_roles:
-  creation_ordering: uniq
+  created_ordering: uniq
 relations:
   other:
     schema: OtherSchema
@@ -50,7 +50,7 @@ def test_schema_yaml():
     assert tt.name == "TestSchema"
     assert tt.version in ("3", 3)  # TODO: strictyaml
     assert tt.key == "_test.TestSchema"
-    assert tt.field_roles == FieldRoles(creation_ordering=["uniq"])
+    assert tt.field_roles == FieldRoles(created_ordering=["uniq"])
     assert len(tt.fields) == 3
     f1 = tt.get_field("uniq")
     assert f1.field_type == Text(3)
