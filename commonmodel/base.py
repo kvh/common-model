@@ -8,6 +8,7 @@ import yaml
 from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 from commonmodel.utils import FrozenPydanticBase
 
+NAMESPACE_SEP = "/"
 
 # TODO: validator support (NotNull Immutable Min Max ...?? see reference)
 class Validator(FrozenPydanticBase):
@@ -21,6 +22,7 @@ class Field(FrozenPydanticBase):
     field_type: FieldType
     validators: List[Validator] = []
     description: Optional[str] = None
+    schema_key: Optional[str] = None
 
     def is_nullable(self) -> bool:
         for v in self.validators:
@@ -87,7 +89,7 @@ class Schema(FrozenPydanticBase):
     def key(self) -> str:
         k = self.name
         if self.namespace:
-            k = self.namespace + "." + k
+            k = self.namespace + NAMESPACE_SEP + k
         return k
 
     def get_field(self, field_name: str) -> Field:
@@ -115,7 +117,9 @@ class Schema(FrozenPydanticBase):
             if (
                 impl.schema_key == other_key
                 or impl.schema_key
-                == other_key.split(".")[-1]  # TODO: fix once we have a "library"
+                == other_key.split(NAMESPACE_SEP)[
+                    -1
+                ]  # TODO: fix once we have a "library"
             ):
                 return impl.as_schema_translation(self.key, other_key)
         return None
@@ -144,7 +148,7 @@ def schema_like_to_name(d: SchemaLike) -> str:
     if isinstance(d, Schema):
         return d.name
     if isinstance(d, str):
-        return d.split(".")[-1]
+        return d.split(NAMESPACE_SEP)[-1]
     raise TypeError(d)
 
 
@@ -196,7 +200,11 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     for name, f in raw_fields.items():
         if isinstance(f, str):
             f = process_field_string_to_dict(f)
-        nf = {"name": name, "field_type": f.pop("type", None)}
+        nf = {
+            "name": name,
+            "field_type": f.pop("type", f.pop("field_type", None)),
+            "schema_key": f.pop("schema", f.pop("schema_key", None)),
+        }
         nf.update(f)
         raw_def["fields"].append(nf)
     # TODO: validate unique_on fields are present in fields

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from pathlib import Path
-from commonmodel.base import Schema, schema_from_yaml_file
+from commonmodel.base import Schema, schema_from_yaml_file, NAMESPACE_SEP
 from typing import Dict, List, Optional, Union
 from .schema_lookup import key_lookup, namespace_lookup
 
@@ -17,7 +17,7 @@ def get_highest_precedence(keys: List[str], namespace_precedence: List[str]) -> 
     order = []
     for key in keys:
         try:
-            o = namespace_precedence.index(key.split(".")[0])
+            o = namespace_precedence.index(key.split(NAMESPACE_SEP)[0])
         except ValueError:
             o = 999999
         order.append((o, key))
@@ -31,14 +31,14 @@ def get_schema_key(
     namespace_precedence: List[str] = None,
     namespace_lookup_override: Dict = None,
 ) -> Optional[str]:
-    if "." in schema:
-        ns, name = schema.split(".")
+    if NAMESPACE_SEP in schema:
+        ns, name = schema.split(NAMESPACE_SEP)
     else:
         ns, name = None, schema
     if namespace:
         ns = namespace
     if ns:
-        return ns + "." + name
+        return ns + NAMESPACE_SEP + name
     keys = (namespace_lookup_override or namespace_lookup).get(name)
     if not keys:
         return None
@@ -49,8 +49,10 @@ def get_schema_key(
     return key
 
 
-def get_schema_path(key: str,) -> Optional[str]:
-    return key_lookup.get(key)
+# def get_schema_path(
+#     key: str,
+# ) -> Optional[str]:
+#     return key_lookup.get(key)
 
 
 def find_schema(
@@ -65,10 +67,10 @@ def find_schema(
         return None
     if key in schema_cache:
         return schema_cache[key]
-    path = get_schema_path(key)
-    if path is None:
-        return None
-    schema = schema_from_yaml_file(pyroot / path)
-    schema_cache[schema.key] = schema
-    return schema
-
+    return None
+    # path = get_schema_path(key)
+    # if path is None:
+    #     return None
+    # schema = schema_from_yaml_file(pyroot / path)
+    # schema_cache[schema.key] = schema
+    # return schema

@@ -49,7 +49,7 @@ def test_schema_yaml():
     tt = schema_from_yaml(test_schema_yml)
     assert tt.name == "TestSchema"
     assert tt.version in ("3", 3)  # TODO: strictyaml
-    assert tt.key == "_test.TestSchema"
+    assert tt.key == "_test/TestSchema"
     assert tt.field_roles == FieldRoles(created_ordering=["uniq"])
     assert len(tt.fields) == 3
     f1 = tt.get_field("uniq")
@@ -68,7 +68,7 @@ def test_schema_yaml():
     assert impl.fields == {"sub_uniq": "uniq"}
     assert is_any(tt) is False
     assert schema_like_to_name(tt) == "TestSchema"
-    assert schema_like_to_key(tt) == "_test.TestSchema"
+    assert schema_like_to_key(tt) == "_test/TestSchema"
     assert schema_to_yaml(tt) is not None  # TODO
     assert Schema.from_dict(tt.dict()).dict() == tt.dict()
     f3 = tt.get_field("short_field")
@@ -91,5 +91,5 @@ def test_schema_translation():
 
 def test_any_schema():
     assert AnySchema.name == "Any"
-    assert AnySchema.key == "core.Any"
+    assert AnySchema.key == "core/Any"
     assert AnySchema.fields == []
