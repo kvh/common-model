@@ -43,8 +43,6 @@ A CommonModel Schema provides a single place to describe the properties of an ab
 commonmodel: 0.3.0
 
 name: Transaction
-namespace: common
-version: 0.1.0
 description: |
   Represents any uniquely identified commercial transaction of a set amount at a
   given time, optionally specifying the buyer, seller, currency, and item transacted.
@@ -86,47 +84,3 @@ documentation:
       be safely de-duplicated. If data does not have a unique identifier, either
       create one, or use a more basic schema like `common.Measurement`.
 ```
-
-## Versioning
-
-Schemas follow semantic versioning conventions, meaning that breaking (backwards
-incompatible) changes require a major version bump, new backwards
-compatible features require a minor version bump, and bug fixes can be a patch
-version bump.
-
-Examples of backwards **incompatible** changes requiring major version bump:
-
-- Add a new NotNull field
-- Change an existing field type to a more restrictive type (Float -> Integer)
-- Rename a field
-- Change unique fields
-- Remove or change relations or implementations
-- Make immutable
-
-Examples of backwards **compatible** changes requiring minor version bump:
-
-- Add a new nullable field
-- Change an existing field type to a less restrictive type (Text -> LongText, Integer -> Decimal)
-- Change the semantic meaning of a field or schema
-- Add new relations or implementations
-
-Examples of fixes requiring a patch version bump:
-
-- Edit the documentation or description
-- Fix typo or other bug
-
-Examples of changes that are not allowed as a version and will be a new Schema:
-
-- Change the name of a schema
-- Change the namespace of a schema
-
-Each CommonModel Schema is a folder with the current / default version
-at the top level and a 'versions' folder with previous versions suffixed
-with their version number:
-
-- ExampleSchema/
-  - ExampleSchema.yml
-  - versions/
-    - ExampleSchema-1.5.2.yml
-    - ExampleSchema-0.3.0.yml
-    - ExampleSchema-0.0.1.yml

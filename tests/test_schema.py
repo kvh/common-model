@@ -11,7 +11,6 @@ from commonmodel.base import (
     create_quick_schema,
     is_any,
     schema_from_yaml,
-    schema_like_to_key,
     schema_like_to_name,
     schema_to_yaml,
 )
@@ -19,8 +18,6 @@ from commonmodel.field_types import Json, Text
 
 test_schema_yml = """
 name: TestSchema
-namespace: _test
-version: 3
 description: Description
 unique_on: uniq
 immutable: false
@@ -48,8 +45,6 @@ implementations:
 def test_schema_yaml():
     tt = schema_from_yaml(test_schema_yml)
     assert tt.name == "TestSchema"
-    assert tt.version in ("3", 3)  # TODO: strictyaml
-    assert tt.key == "_test/TestSchema"
     assert tt.field_roles == FieldRoles(created_ordering=["uniq"])
     assert len(tt.fields) == 3
     f1 = tt.get_field("uniq")
@@ -60,15 +55,14 @@ def test_schema_yaml():
     assert f2.is_nullable()
     assert len(tt.relations) == 1
     rel = tt.relations[0]
-    assert rel.schema_key == "OtherSchema"
+    assert rel.schema_name == "OtherSchema"
     assert rel.fields == {"other_field": "other_field"}
     assert len(tt.implementations) == 1
     impl = tt.implementations[0]
-    assert impl.schema_key == "SubType"
+    assert impl.schema_name == "SubType"
     assert impl.fields == {"sub_uniq": "uniq"}
     assert is_any(tt) is False
     assert schema_like_to_name(tt) == "TestSchema"
-    assert schema_like_to_key(tt) == "_test/TestSchema"
     assert schema_to_yaml(tt) is not None  # TODO
     assert Schema.from_dict(tt.dict()).dict() == tt.dict()
     f3 = tt.get_field("short_field")
@@ -76,20 +70,6 @@ def test_schema_yaml():
     assert f3.validators == [Validator(name="NotNull")]
 
 
-def test_schema_translation():
-    t_base = create_quick_schema("t_base", fields=[("f1", "Text"), ("f2", "Integer")])
-    t_impl = create_quick_schema(
-        "t_impl",
-        fields=[("g1", "Text"), ("g2", "Integer")],
-        implementations=[
-            Implementation(schema_key="t_base", fields={"f1": "g1", "f2": "g2"})
-        ],
-    )
-    trans = t_impl.get_translation_to(t_base.key)
-    assert trans.translation == {"g1": "f1", "g2": "f2"}
-
-
 def test_any_schema():
     assert AnySchema.name == "Any"
-    assert AnySchema.key == "core/Any"
     assert AnySchema.fields == []

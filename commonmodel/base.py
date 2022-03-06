@@ -8,8 +8,6 @@ import yaml
 from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 from commonmodel.utils import FrozenPydanticBase
 
-NAMESPACE_SEP = "/"
-
 # TODO: validator support (NotNull Immutable Min Max ...?? see reference)
 class Validator(FrozenPydanticBase):
     name: str
@@ -22,7 +20,7 @@ class Field(FrozenPydanticBase):
     field_type: FieldType
     validators: List[Validator] = []
     description: Optional[str] = None
-    schema_key: Optional[str] = None
+    schema_name: Optional[str] = None
 
     def is_nullable(self) -> bool:
         for v in self.validators:
@@ -31,28 +29,18 @@ class Field(FrozenPydanticBase):
         return True
 
 
-SchemaKey = str
 SchemaName = str
 
 
 class Relation(FrozenPydanticBase):
     name: str
-    schema_key: SchemaKey
+    schema_name: str
     fields: Dict[str, str]
 
 
 class Implementation(FrozenPydanticBase):
-    schema_key: SchemaKey
+    schema_name: str
     fields: Dict[str, str]
-
-    def as_schema_translation(
-        self, schema_key: SchemaKey, other_key: SchemaKey
-    ) -> SchemaTranslation:
-        # TODO: this inversion is a bit confusing
-        trans = {v: k for k, v in self.fields.items()}
-        return SchemaTranslation(
-            translation=trans, from_schema_key=schema_key, to_schema_key=other_key
-        )
 
 
 class FieldRoles(FrozenPydanticBase):
@@ -67,8 +55,6 @@ class FieldRoles(FrozenPydanticBase):
 
 class Schema(FrozenPydanticBase):
     name: str
-    namespace: Optional[str]
-    version: Optional[str]
     description: str
     unique_on: List[str]
     fields: List[Field]
@@ -78,19 +64,11 @@ class Schema(FrozenPydanticBase):
     immutable: bool = False
     raw_definition: Optional[str] = None
     # extends: Optional[
-    #     SchemaKey
+    #     str
     # ] = None  # TODO: TBD how useful this would be, or exactly how it would work
     primary_dimension: Optional[str] = None  # TODO: TBD if we want this
-    field_lookup: Optional[Dict[str, Field]] = None
     commonmodel: Optional[str] = None  # commonmodel spec version
     documentation: Optional[Dict[str, Union[str, Dict[str, str]]]] = None
-
-    @property
-    def key(self) -> str:
-        k = self.name
-        if self.namespace:
-            k = self.namespace + NAMESPACE_SEP + k
-        return k
 
     def get_field(self, field_name: str) -> Field:
         for f in self.fields:
@@ -109,34 +87,8 @@ class Schema(FrozenPydanticBase):
     def from_dict(cls, d: Dict) -> Schema:
         return build_schema_from_dict(d)
 
-    def get_translation_to(self, other: SchemaLike) -> Optional[SchemaTranslation]:
-        other_key = schema_like_to_key(other)
-        if not self.implementations:
-            return None
-        for impl in self.implementations:
-            if (
-                impl.schema_key == other_key
-                or impl.schema_key
-                == other_key.split(NAMESPACE_SEP)[
-                    -1
-                ]  # TODO: fix once we have a "library"
-            ):
-                return impl.as_schema_translation(self.key, other_key)
-        return None
 
-
-SchemaLike = Union[Schema, SchemaKey, SchemaName]
-
-
-class SchemaTranslation(FrozenPydanticBase):
-    translation: Optional[Dict[str, str]] = None
-    from_schema_key: Optional[SchemaKey] = None
-    to_schema_key: Optional[SchemaKey] = None
-
-    def as_dict(self) -> Dict[str, str]:
-        if not self.translation:
-            raise NotImplementedError
-        return self.translation
+SchemaLike = Union[Schema, SchemaName]
 
 
 def is_any(schema_like: SchemaLike) -> bool:
@@ -147,14 +99,6 @@ def is_any(schema_like: SchemaLike) -> bool:
 def schema_like_to_name(d: SchemaLike) -> str:
     if isinstance(d, Schema):
         return d.name
-    if isinstance(d, str):
-        return d.split(NAMESPACE_SEP)[-1]
-    raise TypeError(d)
-
-
-def schema_like_to_key(d: SchemaLike) -> str:
-    if isinstance(d, Schema):
-        return d.key
     if isinstance(d, str):
         return d
     raise TypeError(d)
@@ -203,7 +147,7 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
         nf = {
             "name": name,
             "field_type": f.pop("type", f.pop("field_type", None)),
-            "schema_key": f.pop("schema", f.pop("schema_key", None)),
+            "schema_name": f.pop("schema", f.pop("schema_name", None)),
         }
         nf.update(f)
         raw_def["fields"].append(nf)
@@ -215,9 +159,6 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     ir = raw_def.get("immutable")
     if isinstance(ir, str):
         raw_def["immutable"] = ir.startswith("t") or ir.startswith("y")
-    # raw_def["type_class"] = raw_def.pop("class", None)
-    if "namespace" not in raw_def:
-        raw_def["namespace"] = raw_def.pop("namespace", None)
     return raw_def
 
 
@@ -226,14 +167,14 @@ def build_schema_from_dict(d: dict, **overrides: Any) -> Schema:
     impls = d.pop("implementations", {})
     if isinstance(impls, dict):
         d["implementations"] = [
-            Implementation(schema_key=k, fields=v) for k, v in impls.items()
+            Implementation(schema_name=k, fields=v) for k, v in impls.items()
         ]
     else:
         d["implementations"] = [Implementation(**i) for i in impls]
     rels = d.pop("relations", {})
     if isinstance(rels, dict):
         d["relations"] = [
-            Relation(name=k, schema_key=v["schema"], fields=v["fields"])
+            Relation(name=k, schema_name=v["schema"], fields=v["fields"])
             for k, v in rels.items()
         ]
     else:
@@ -277,7 +218,7 @@ def schema_to_yaml(schema: Schema) -> str:
     # TODO: Very rough version, not for production use. Also, use existing tool for this?
     if schema.raw_definition:
         return schema.raw_definition
-    yml = f"name: {schema.name}\nversion: {schema.version}\ndescription: {schema.description}\n"
+    yml = f"name: {schema.name}\ndescription: {schema.description}\n"
     unique_list = "\n  - ".join(schema.unique_on)
     yml += f"unique_on: \n  - {unique_list}\n"
     yml += f"immutable: {schema.immutable}\nfields:\n"
@@ -311,8 +252,6 @@ def create_quick_field(name: str, field_type: FieldTypeLike, **kwargs) -> Field:
 def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
     defaults: Dict[str, Any] = dict(
         name=name,
-        namespace=None,
-        version="1.0",
         description="...",
         unique_on=[],
         implementations=[],
@@ -325,8 +264,6 @@ def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
 
 AnySchema = Schema(
     name="Any",
-    namespace="core",
-    version="0",
     description="The Any root/super schema is compatible with all other Schemas",
     unique_on=[],
     fields=[],
