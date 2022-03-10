@@ -29,6 +29,12 @@ fields:
   other_field:
     type: Integer
   short_field: Json NotNull
+  nested:
+    type: Json
+    schema:
+      name: NestedSchema
+      fields:
+        f1: Integer
 field_roles:
   created_ordering: uniq
 relations:
@@ -46,7 +52,7 @@ def test_schema_yaml():
     tt = schema_from_yaml(test_schema_yml)
     assert tt.name == "TestSchema"
     assert tt.field_roles == FieldRoles(created_ordering=["uniq"])
-    assert len(tt.fields) == 3
+    assert len(tt.fields) == 4
     f1 = tt.get_field("uniq")
     assert f1.field_type == Text(3)
     assert f1.validators == [Validator(name="NotNull")]
@@ -68,6 +74,10 @@ def test_schema_yaml():
     f3 = tt.get_field("short_field")
     assert f3.field_type == Json()
     assert f3.validators == [Validator(name="NotNull")]
+    f4 = tt.get_field("nested")
+    assert f4.json_schema is not None
+    assert f4.json_schema.name == "NestedSchema"
+    assert len(f4.json_schema.fields) == 1
 
 
 def test_any_schema():

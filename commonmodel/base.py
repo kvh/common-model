@@ -20,7 +20,7 @@ class Field(FrozenPydanticBase):
     field_type: FieldType
     validators: List[Validator] = []
     description: Optional[str] = None
-    schema_name: Optional[str] = None
+    json_schema: Optional[Schema] = None
 
     def is_nullable(self) -> bool:
         for v in self.validators:
@@ -55,7 +55,7 @@ class FieldRoles(FrozenPydanticBase):
 
 class Schema(FrozenPydanticBase):
     name: str
-    description: str
+    description: Optional[str]
     unique_on: List[str]
     fields: List[Field]
     field_roles: FieldRoles = FieldRoles()
@@ -144,10 +144,13 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     for name, f in raw_fields.items():
         if isinstance(f, str):
             f = process_field_string_to_dict(f)
+        json_schema = f.pop("schema", f.pop("json_schema", None))
+        if json_schema:
+            json_schema = schema_from_dict(json_schema)
         nf = {
             "name": name,
             "field_type": f.pop("type", f.pop("field_type", None)),
-            "schema_name": f.pop("schema", f.pop("schema_name", None)),
+            "json_schema": json_schema,
         }
         nf.update(f)
         raw_def["fields"].append(nf)
@@ -159,6 +162,7 @@ def clean_raw_schema_defintion(raw_def: dict) -> dict:
     ir = raw_def.get("immutable")
     if isinstance(ir, str):
         raw_def["immutable"] = ir.startswith("t") or ir.startswith("y")
+    raw_def["description"] = raw_def.get("description", "")
     return raw_def
 
 
@@ -261,6 +265,8 @@ def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
     schema = Schema(**defaults)  # type: ignore
     return schema
 
+
+Field.update_forward_refs()
 
 AnySchema = Schema(
     name="Any",
