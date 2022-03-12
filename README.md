@@ -58,14 +58,6 @@ fields:
   item_id: Text
   currency_code: Text
   metadata: Json
-relations:
-  common.Currency:
-    fields:
-      code: currency_code
-implementations:
-  common.TimeSeries:
-    time: transacted_at
-    value: amount
 field_roles:
   primary_identifier: id
   created_ordering: transacted_at

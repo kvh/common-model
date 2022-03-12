@@ -3,16 +3,11 @@ from __future__ import annotations
 from dataclasses import asdict
 
 from commonmodel.base import (
-    AnySchema,
     FieldRoles,
-    Implementation,
     Schema,
-    Validator,
     create_quick_schema,
-    is_any,
     schema_from_yaml,
     schema_like_to_name,
-    schema_to_yaml,
 )
 from commonmodel.field_types import Json, Text
 
@@ -24,8 +19,7 @@ immutable: false
 fields:
   uniq:
     type: Text(3)
-    validators:
-      - NotNull
+    nullable: false
   other_field:
     type: Integer
   short_field: Json NotNull
@@ -37,14 +31,6 @@ fields:
         f1: Integer
 field_roles:
   created_ordering: uniq
-relations:
-  other:
-    schema: OtherSchema
-    fields:
-      other_field: other_field
-implementations:
-  SubType:
-    sub_uniq: uniq
 """
 
 
@@ -55,31 +41,58 @@ def test_schema_yaml():
     assert len(tt.fields) == 4
     f1 = tt.get_field("uniq")
     assert f1.field_type == Text(3)
-    assert f1.validators == [Validator(name="NotNull")]
-    assert f1.is_nullable() is False
+    assert not f1.nullable
     f2 = tt.get_field("other_field")
-    assert f2.is_nullable()
-    assert len(tt.relations) == 1
-    rel = tt.relations[0]
-    assert rel.schema_name == "OtherSchema"
-    assert rel.fields == {"other_field": "other_field"}
-    assert len(tt.implementations) == 1
-    impl = tt.implementations[0]
-    assert impl.schema_name == "SubType"
-    assert impl.fields == {"sub_uniq": "uniq"}
-    assert is_any(tt) is False
+    assert f2.nullable
     assert schema_like_to_name(tt) == "TestSchema"
-    assert schema_to_yaml(tt) is not None  # TODO
-    assert Schema.from_dict(tt.dict()).dict() == tt.dict()
+    assert Schema(**tt.dict(by_alias=True)).dict() == tt.dict()
     f3 = tt.get_field("short_field")
     assert f3.field_type == Json()
-    assert f3.validators == [Validator(name="NotNull")]
+    assert not f3.nullable
     f4 = tt.get_field("nested")
     assert f4.json_schema is not None
     assert f4.json_schema.name == "NestedSchema"
     assert len(f4.json_schema.fields) == 1
 
 
-def test_any_schema():
-    assert AnySchema.name == "Any"
-    assert AnySchema.fields == []
+full_test_schema_yaml = """
+commonmodel: 0.3.0
+
+name: Transaction
+description: |
+  Represents any uniquely identified commercial transaction of a set amount at a
+  given time, optionally specifying the buyer, seller, currency, and item transacted.
+immutable: true
+unique_on:
+  - id
+fields:
+  id: Text NotNull
+  amount: Decimal(16,2) NotNull
+  transacted_at: DateTime NotNull
+  buyer_id: Text
+  seller_id: Text
+  item_id: Text
+  currency_code: Text
+  metadata: Json
+field_roles:
+  primary_identifier: id
+  created_ordering: transacted_at
+  dimensions: [buyer_id, seller_id, item_id]
+  measures: [amount]
+
+documentation:
+  schema: |
+    A Transaction is meant to be the broadest, most base definition
+    for all commercial transactions involving a buyer and a seller or a sender
+    and receiver, whether that's an ecommerce order, a ACH transfer, or a real
+    estate sale.
+  fields:
+    id: |
+      Unique identifier for this transaction, required so that transactions can
+      be safely de-duplicated. If data does not have a unique identifier, either
+      create one, or use a more basic schema like `common.Measurement`.
+"""
+
+
+def test_full_schema_yaml():
+    tt = schema_from_yaml(full_test_schema_yaml)
