@@ -2,9 +2,10 @@ from pydantic import BaseModel
 
 
 class PydanticBase(BaseModel):
-    pass
-    # class Config:
-    #     extra = "forbid"
+    class Config:
+        extra = "forbid"
+        use_enum_values = True
+        allow_population_by_field_name = True
 
 
 class FrozenPydanticBase(PydanticBase):

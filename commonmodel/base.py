@@ -21,7 +21,7 @@ class Field(FrozenPydanticBase):
     field_type: FieldType = pydantic.Field(alias="type")
     nullable: bool = True
     description: Optional[str] = None
-    json_schema: Optional[Schema] = pydantic.Field(alias="schema")
+    json_schema: Optional[Schema] = pydantic.Field(alias="schema", default=None)
 
     @pydantic.validator("field_type", pre=True)
     def check_field_type(cls, field_type: str) -> FieldType:
@@ -124,7 +124,7 @@ def process_field_string_to_dict(f: str) -> Dict:
 
 
 def create_quick_field(name: str, field_type: FieldTypeLike, **kwargs) -> Field:
-    args = dict(name=name, field_type=field_type)
+    args = dict(name=name, type=field_type)
     args.update(kwargs)
     return Field(**args)
 
