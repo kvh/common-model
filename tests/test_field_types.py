@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import pickle
 from typing import Type, Union
 
 import pytest
@@ -34,16 +35,24 @@ def test_instantiation():
 
 
 def test_repr():
+    assert repr(Boolean()) == "'Boolean'"
     assert repr(Text(length=255)) == "'Text(length=255)'"
     assert repr(Decimal()) == "'Decimal(precision=16, scale=6)'"
     assert repr(Decimal(10)) == "'Decimal(precision=10, scale=6)'"
     assert repr(Decimal(16, 2)) == "'Decimal(precision=16, scale=2)'"
 
 
+def test_pickle():
+    assert pickle.loads(pickle.dumps(Boolean())) == Boolean()
+    assert pickle.loads(pickle.dumps(Decimal(16, 2))) == Decimal(16, 2)
+    assert pickle.loads(pickle.dumps(Text(length=255))) == Text(length=255)
+
+
 @pytest.mark.parametrize(
     "s,expected",
     [
         ("Text", Text),
+        ("Boolean", Boolean),
         ("Text(length=3)", Text(length=3)),
         ("Text(3)", Text(length=3)),
         ("DateTime", DateTime),

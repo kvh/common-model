@@ -65,6 +65,10 @@ class FieldTypeBase(str):
     _kwargs: Dict[str, Any]
 
     def __new__(cls, *args, **kwargs):
+        if len(args) == 1:
+            if args[0] == cls.__name__:
+                # We are called from pickle and initialized w the actual string value, so don't count as arg
+                args = ()
         _kwargs = cls._build_kwargs(*args, **kwargs)
         obj = str.__new__(cls, cls._build_str(_kwargs))
         obj._kwargs = _kwargs
