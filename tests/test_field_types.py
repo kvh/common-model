@@ -34,10 +34,10 @@ def test_instantiation():
 
 
 def test_repr():
-    assert repr(Text(length=255)) == "Text(length=255)"
-    assert repr(Decimal()) == "Decimal(precision=16, scale=6)"
-    assert repr(Decimal(10)) == "Decimal(precision=10, scale=6)"
-    assert repr(Decimal(16, 2)) == "Decimal(precision=16, scale=2)"
+    assert repr(Text(length=255)) == "'Text(length=255)'"
+    assert repr(Decimal()) == "'Decimal(precision=16, scale=6)'"
+    assert repr(Decimal(10)) == "'Decimal(precision=10, scale=6)'"
+    assert repr(Decimal(16, 2)) == "'Decimal(precision=16, scale=2)'"
 
 
 @pytest.mark.parametrize(

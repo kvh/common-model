@@ -3,6 +3,8 @@ from __future__ import annotations
 import re
 from typing import Any, Dict, List, Type, Union
 
+from commonmodel.utils import PydanticBase
+
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
 #
@@ -52,7 +54,7 @@ from typing import Any, Dict, List, Type, Union
 # UnicodeText
 
 
-class FieldTypeBase:
+class FieldTypeBase(str):
     parameter_names: List[str] = []
     defaults: Dict[str, Any] = {}
     castable_to_types: List[str] = [
@@ -62,25 +64,29 @@ class FieldTypeBase:
     # inferrable_from_types: List[str] # TODO
     _kwargs: Dict[str, Any]
 
-    def __init__(self, *args, **kwargs):
-        _kwargs = dict(self.defaults)
+    def __new__(cls, *args, **kwargs):
+        _kwargs = cls._build_kwargs(*args, **kwargs)
+        obj = str.__new__(cls, cls._build_str(_kwargs))
+        obj._kwargs = _kwargs
+        return obj
+
+    @classmethod
+    def _build_kwargs(cls, *args, **kwargs) -> dict:
+        _kwargs = dict(cls.defaults)
         for i, arg in enumerate(args):
-            name = self.parameter_names[i]
+            name = cls.parameter_names[i]
             _kwargs[name] = arg
         _kwargs.update(kwargs)
-        self._kwargs = _kwargs
+        return _kwargs
 
-    def __repr__(self) -> str:
-        s = self.name
-        kwargs = ", ".join(
-            [
-                f"{n}={self._kwargs[n]}"
-                for n in self.parameter_names
-                if n in self._kwargs
-            ]
+    @classmethod
+    def _build_str(cls, kwargs: dict) -> str:
+        s = cls.__name__
+        _kwargs = ", ".join(
+            [f"{n}={kwargs[n]}" for n in cls.parameter_names if n in kwargs]
         )
-        if kwargs:
-            s += f"({kwargs})"
+        if _kwargs:
+            s += f"({_kwargs})"
         return s
 
     @classmethod
