@@ -65,12 +65,13 @@ class FieldTypeBase(str):
     _kwargs: Dict[str, Any]
 
     def __new__(cls, *args, **kwargs):
+        """Override so FieldTypes can act naturally as Strings, but be parsed into FieldTypes"""
         if len(args) == 1:
-            if args[0] == cls.__name__:
-                # We are called from pickle and initialized w the actual string value, so don't count as arg
-                args = ()
+            if isinstance(args[0], str) and args[0].startswith(cls.__name__):
+                # We are called from pickle/init and initialized w the actual string value
+                return ensure_field_type(args[0])
         _kwargs = cls._build_kwargs(*args, **kwargs)
-        obj = str.__new__(cls, cls._build_str(_kwargs))
+        obj = super().__new__(cls, cls._build_str(_kwargs))
         obj._kwargs = _kwargs
         return obj
 
@@ -129,7 +130,7 @@ class FieldTypeBase(str):
 
     @property
     def name(self) -> str:
-        return self.__class__.__name__
+        return type(self).__name__
 
     def to_json(self) -> str:
         return repr(self)
@@ -263,6 +264,9 @@ def str_to_field_type(s: str) -> Union[Type[FieldType], FieldType]:
     local_vars = {f().name: f for f in all_types}
     try:
         ft = eval(s, {"__builtins__": None}, local_vars)
+        if isinstance(ft, str):
+            # Try again, since we had nested str
+            ft = eval(ft, {"__builtins__": None}, local_vars)
         return ft
     except (AttributeError, TypeError):
         raise NotImplementedError(s)
