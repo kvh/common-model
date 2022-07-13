@@ -12,6 +12,7 @@ from commonmodel.field_types import (
     FieldType,
     Float,
     Integer,
+    Interval,
     LongBinary,
     LongText,
     Text,
@@ -33,6 +34,7 @@ def test_instantiation():
     Text()
     Text(length=255)
     LongText()
+    Interval()
 
 
 def test_repr():
@@ -68,6 +70,7 @@ def test_pickle():
         ("Text(length=3)", Text(length=3)),
         ("Text(3)", Text(length=3)),
         ("DateTime", DateTime),
+        ("Interval", Interval),
         ("DateTime(timezone=False)", DateTime(timezone=False)),
         ("Decimal(precision=16, scale=2)", Decimal(16, 2)),
         ("Decimal(16,2)", Decimal(16, 2)),

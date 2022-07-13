@@ -218,7 +218,7 @@ class Time(FieldTypeBase):
 
 
 class Interval(FieldTypeBase):
-    pass
+    castable_to_types: List[str] = ["Text", "LongText"]
 
 
 ###################
@@ -246,6 +246,7 @@ all_types = [
     Date,
     Time,
     DateTime,
+    Interval,
     Binary,
     LongBinary,
     Text,

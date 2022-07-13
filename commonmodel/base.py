@@ -130,13 +130,15 @@ def create_quick_field(name: str, field_type: FieldTypeLike, **kwargs) -> Field:
 
 
 # Helper
-def create_quick_schema(name: str, fields: List[Tuple[str, str]], **kwargs):
+def create_quick_schema(name: str, fields: List[Tuple[str, str]] | dict, **kwargs):
     defaults: Dict[str, Any] = dict(
         name=name,
         unique_on=[],
     )
     defaults.update(kwargs)
-    defaults["fields"] = [create_quick_field(f[0], f[1]) for f in fields]
+    if isinstance(fields, dict):
+        fields = list(fields.items())
+    defaults["fields"] = [create_quick_field(name, typ) for name, typ in fields]
     schema = Schema(**defaults)  # type: ignore
     return schema
 
