@@ -13,6 +13,7 @@ from .field_types import (
     FieldType,
     Float,
     Integer,
+    Interval,
     Json,
     LongBinary,
     LongText,
