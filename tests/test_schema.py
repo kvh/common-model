@@ -96,3 +96,59 @@ documentation:
 
 def test_full_schema_yaml():
     tt = schema_from_yaml(full_test_schema_yaml)
+
+
+def test_migration():
+    old_schema = {
+        "name": "RecordMetadataForPostHogEvent_8gp3Habk",
+        "description": "Record metadata for records with PostHogEvent schema",
+        "fields": [
+            {"name": "uid", "field_type": "Text", "nullable": True},
+            {"name": "execution_uid", "field_type": "Text", "nullable": True},
+            {
+                "name": "timestamp",
+                "field_type": "DateTime(timezone=False)",
+                "nullable": True,
+            },
+            {
+                "name": "record",
+                "field_type": "Json",
+                "nullable": True,
+                "json_schema": {
+                    "name": "PostHogEvent",
+                    "description": "PostHog Event",
+                    "fields": [
+                        {"name": "id", "field_type": "Text", "nullable": True},
+                        {"name": "distinct_id", "field_type": "Text", "nullable": True},
+                        {"name": "properties", "field_type": "Json", "nullable": True},
+                        {"name": "event", "field_type": "Text", "nullable": True},
+                        {"name": "timestamp", "field_type": "Text", "nullable": True},
+                        {"name": "person", "field_type": "Json", "nullable": True},
+                        {"name": "elements", "field_type": "Json", "nullable": True},
+                        {
+                            "name": "elements_chain",
+                            "field_type": "Text",
+                            "nullable": True,
+                        },
+                    ],
+                    "unique_on": ["id"],
+                    "field_roles": {
+                        "measures": [],
+                        "dimensions": [],
+                        "created_ordering": [],
+                        "updated_ordering": [],
+                    },
+                    "immutable": True,
+                },
+            },
+        ],
+        "unique_on": ["uid"],
+        "field_roles": {
+            "measures": [],
+            "dimensions": [],
+            "created_ordering": [],
+            "updated_ordering": [],
+        },
+        "immutable": True,
+    }
+    assert Schema(**old_schema)

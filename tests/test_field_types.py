@@ -38,14 +38,11 @@ def test_instantiation():
 
 
 def test_repr():
-    assert repr(Boolean()) == "'Boolean'"
-    assert repr(Text(length=255)) == "'Text(length=255)'"
-    assert repr(Decimal()) == "'Decimal(precision=16, scale=6)'"
-    assert repr(Decimal(10)) == "'Decimal(precision=10, scale=6)'"
-    assert repr(Decimal(16, 2)) == "'Decimal(precision=16, scale=2)'"
-    assert Decimal("Decimal(12,2)") == Decimal(
-        12, 2
-    )  # Handle str instantiation edge case
+    assert repr(Boolean()) == "Boolean"
+    assert repr(Text(length=255)) == "Text(length=255)"
+    assert repr(Decimal()) == "Decimal"
+    assert repr(Decimal(10)) == "Decimal(precision=10)"
+    assert repr(Decimal(16, 2)) == "Decimal(precision=16, scale=2)"
 
 
 def test_repr_round_trip():
@@ -65,16 +62,16 @@ def test_pickle():
 @pytest.mark.parametrize(
     "s,expected",
     [
-        ("Text", Text),
-        ("Boolean", Boolean),
+        ("Text", Text()),
+        ("Boolean", Boolean()),
         ("Text(length=3)", Text(length=3)),
         ("Text(3)", Text(length=3)),
-        ("DateTime", DateTime),
-        ("Interval", Interval),
+        ("DateTime", DateTime()),
+        ("Interval", Interval()),
         ("DateTime(timezone=False)", DateTime(timezone=False)),
         ("Decimal(precision=16, scale=2)", Decimal(16, 2)),
         ("Decimal(16,2)", Decimal(16, 2)),
-        ("Decimal()", Decimal(16, 6)),
+        ("Decimal()", Decimal()),
     ],
 )
 def test_str_to_field_types(s: str, expected: Union[FieldType, Type[FieldType]]):

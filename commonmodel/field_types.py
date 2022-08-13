@@ -1,9 +1,11 @@
 from __future__ import annotations
+from enum import Enum
 
 import re
+from dataclasses import dataclass, field
 from typing import Any, Dict, List, Type, Union
 
-from commonmodel.utils import PydanticBase
+from commonmodel.utils import FrozenPydanticBase, PydanticBase
 
 # Logical arrow type specs, for reference
 # (nb. the pyarrow api does not correspond directly to these)
@@ -53,94 +55,68 @@ from commonmodel.utils import PydanticBase
 # Unicode
 # UnicodeText
 
+ALL_FIELD_TYPE_DEFINITIONS = {}
 
-class FieldTypeBase(str):
+
+class FieldTypeDefinition(FrozenPydanticBase):
+    name: str
     parameter_names: List[str] = []
-    defaults: Dict[str, Any] = {}
+    parameter_defaults: Dict[str, Any] = {}
     castable_to_types: List[str] = [
         "LongText",
         "LongBinary",
     ]  # TODO: Can represent any existing type as a long str?
-    # inferrable_from_types: List[str] # TODO
-    _kwargs: Dict[str, Any]
 
-    def __new__(cls, *args, **kwargs):
-        """Override so FieldTypes can act naturally as Strings, but be parsed into FieldTypes"""
-        if len(args) == 1:
-            if isinstance(args[0], str) and args[0].startswith(cls.__name__):
-                # We are called from pickle/init and initialized w the actual string value
-                return ensure_field_type(args[0])
-        _kwargs = cls._build_kwargs(*args, **kwargs)
-        obj = super().__new__(cls, cls._build_str(_kwargs))
-        obj._kwargs = _kwargs
-        return obj
+    def __call__(self, *args, **kwargs) -> FieldType:
+        # Convenience for parameterizing
+        kwargs.update(self.assign_parameters(args))
+        return FieldType(name=self.name, parameters=kwargs)
 
-    @classmethod
-    def _build_kwargs(cls, *args, **kwargs) -> dict:
-        _kwargs = dict(cls.defaults)
-        for i, arg in enumerate(args):
-            name = cls.parameter_names[i]
-            _kwargs[name] = arg
-        _kwargs.update(kwargs)
-        return _kwargs
+    def assign_parameters(self, params: List[Any]) -> Dict[str, Any]:
+        assigned = {}
+        for i, val in enumerate(params):
+            if i >= len(self.parameter_names):
+                raise ValueError(params)
+            param_name = self.parameter_names[i]
+            assigned[param_name] = val
+        return assigned
 
-    @classmethod
-    def _build_str(cls, kwargs: dict) -> str:
-        s = cls.__name__
-        _kwargs = ", ".join(
-            [f"{n}={kwargs[n]}" for n in cls.parameter_names if n in kwargs]
-        )
-        if _kwargs:
-            s += f"({_kwargs})"
+
+def register_field_type_definition(field_type_definition: FieldTypeDefinition):
+    if field_type_definition.name in ALL_FIELD_TYPE_DEFINITIONS:
+        raise KeyError(f"Type of name {field_type_definition.name} already defined")
+    ALL_FIELD_TYPE_DEFINITIONS[field_type_definition.name] = field_type_definition
+
+
+def get_field_type_definition(name: str) -> FieldTypeDefinition:
+    return ALL_FIELD_TYPE_DEFINITIONS[name]
+
+
+class FieldType(FrozenPydanticBase):
+    name: str
+    parameters: Dict[str, Any] = {}
+
+    def __repr__(self) -> str:
+        s = self.name
+        params = ", ".join(f"{k}={v}" for k, v in self.parameters.items())
+        if params:
+            s += f"({params})"
         return s
 
-    @classmethod
-    def __get_validators__(cls):
-        # one or more validators may be yielded which will be called in the
-        # order to validate the input, each validator will receive as an input
-        # the value returned from the previous validator
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v: Any) -> FieldTypeBase:
-        if not isinstance(v, (str, FieldTypeBase, Type)):
-            raise TypeError(type(v))
-        if isinstance(v, str):
-            v = str_to_field_type(v)
-        if isinstance(v, FieldTypeBase):
-            return v
-        if issubclass(v, FieldTypeBase):
-            return v()
-        raise TypeError(type(v))
-
-    def __eq__(self, o: FieldTypeBase) -> bool:
-        return type(self) is type(o) and self._kwargs == o._kwargs
-
-    def __hash__(self):
-        return hash(repr(self))
-
-    def get_parameters(self) -> Dict[str, Any]:
-        return {k: v for k, v in self._kwargs.items() if k in self.parameter_names}
-
-    def get_parameter(self, name: str) -> Any:
-        return self._kwargs.get(name)
-
-    def update_parameter(self, name: str, value: Any):
-        self._kwargs[name] = value
-
-    @property
-    def name(self) -> str:
-        return type(self).__name__
-
-    def to_json(self) -> str:
+    def __str__(self) -> str:
         return repr(self)
 
-    def is_castable_to_type(self, other: FieldType):
-        return other.name in self.castable_to_types
+    def get_type_definition(self) -> FieldTypeDefinition:
+        return get_field_type_definition(self.name)
+
+    def get_parameters(self) -> Dict[str, Any]:
+        type_def = self.get_type_definition()
+        params = type_def.parameter_defaults.copy()
+        params.update(self.parameters)
+        return params
 
 
-FieldType = FieldTypeBase
-FieldTypeLike = Union[FieldTypeBase, str]
+FieldTypeLike = Union[FieldType, str]
 
 
 #################
@@ -148,30 +124,37 @@ FieldTypeLike = Union[FieldTypeBase, str]
 #################
 
 
-class Boolean(FieldTypeBase):
-    castable_to_types: List[str] = ["Integer", "Float", "Decimal", "Text", "LongText"]
+Boolean = FieldTypeDefinition(
+    name="Boolean",
+    castable_to_types=["Integer", "Float", "Decimal", "Text", "LongText"],
+)
 
 
-class Integer(FieldTypeBase):
-    castable_to_types: List[str] = ["Float", "Decimal", "Text", "LongText"]
+Integer = FieldTypeDefinition(
+    name="Integer", castable_to_types=["Float", "Decimal", "Text", "LongText"]
+)
 
 
-class Float(FieldTypeBase):
-    castable_to_types: List[str] = [
+Float = FieldTypeDefinition(
+    name="Float",
+    castable_to_types=[
         "Decimal",  # Kind of true, potential data loss
         "Text",
         "LongText",
-    ]
+    ],
+)
 
 
-class Decimal(FieldTypeBase):
-    parameter_names: List[str] = ["precision", "scale"]
-    defaults: Dict[str, Any] = {"precision": 16, "scale": 6}
-    castable_to_types: List[str] = [
+Decimal = FieldTypeDefinition(
+    name="Decimal",
+    parameter_names=["precision", "scale"],
+    parameter_defaults={"precision": 16, "scale": 6},
+    castable_to_types=[
         "Float",  # Kind of true, potential data loss
         "Text",
         "LongText",
-    ]
+    ],
+)
 
 
 ################
@@ -179,23 +162,31 @@ class Decimal(FieldTypeBase):
 ################
 
 
-class Binary(FieldTypeBase):
-    parameter_names: List[str] = ["length"]
-    castable_to_types: List[str] = ["LongBinary", "Text", "LongText"]
+Binary = FieldTypeDefinition(
+    name="Binary",
+    parameter_names=["length"],
+    castable_to_types=["LongBinary", "Text", "LongText"],
+)
 
 
-class LongBinary(FieldTypeBase):
-    parameter_names: List[str] = ["length"]
-    castable_to_types: List[str] = ["Text", "LongText"]
+LongBinary = FieldTypeDefinition(
+    name="LongBinary",
+    parameter_names=["length"],
+    castable_to_types=["Text", "LongText"],
+)
 
 
-class Text(FieldTypeBase):
-    parameter_names: List[str] = ["length"]
-    castable_to_types: List[str] = ["LongText"]
+Text = FieldTypeDefinition(
+    name="Text",
+    parameter_names=["length"],
+    castable_to_types=["LongText"],
+)
 
 
-class LongText(FieldTypeBase):
-    parameter_names: List[str] = ["length"]
+LongText = FieldTypeDefinition(
+    name="LongText",
+    parameter_names=["length"],
+)
 
 
 ##################
@@ -203,22 +194,23 @@ class LongText(FieldTypeBase):
 ##################
 
 
-class Date(FieldTypeBase):
-    castable_to_types: List[str] = ["DateTime", "Text", "LongText"]
+Date = FieldTypeDefinition(
+    name="Date", castable_to_types=["DateTime", "Text", "LongText"]
+)
 
 
-class DateTime(FieldTypeBase):
-    castable_to_types: List[str] = ["Text", "LongText"]
-    parameter_names: List[str] = ["timezone"]
-    defaults: Dict[str, Any] = {"timezone": False}
+DateTime = FieldTypeDefinition(
+    name="DateTime",
+    castable_to_types=["Text", "LongText"],
+    parameter_names=["timezone"],
+    parameter_defaults={"timezone": False},
+)
 
 
-class Time(FieldTypeBase):
-    castable_to_types: List[str] = ["Text", "LongText"]
+Time = FieldTypeDefinition(name="Time", castable_to_types=["Text", "LongText"])
 
 
-class Interval(FieldTypeBase):
-    castable_to_types: List[str] = ["Text", "LongText"]
+Interval = FieldTypeDefinition(name="Interval", castable_to_types=["Text", "LongText"])
 
 
 ###################
@@ -226,19 +218,16 @@ class Interval(FieldTypeBase):
 ###################
 
 
-class Json(FieldTypeBase):
-    pass
+Json = FieldTypeDefinition(name="Json")
 
 
-class Struct(FieldTypeBase):
-    pass
+Struct = FieldTypeDefinition(name="Struct")
 
 
-class Array(FieldTypeBase):
-    pass
+Array = FieldTypeDefinition(name="Array")
 
 
-all_types = [
+all_type_definitions = [
     Boolean,
     Integer,
     Float,
@@ -255,27 +244,38 @@ all_types = [
     Struct,
     Array,
 ]
-all_types_instantiated = [ft() for ft in all_types]
-
-DEFAULT_FIELD_TYPE_CLASS = Text
-DEFAULT_FIELD_TYPE = Text()
+for td in all_type_definitions:
+    register_field_type_definition(td)
 
 
-def str_to_field_type(s: str) -> Union[Type[FieldType], FieldType]:
-    local_vars = {f().name: f for f in all_types}
-    try:
-        ft = eval(s, {"__builtins__": None}, local_vars)
-        if isinstance(ft, str):
-            # Try again, since we had nested str
-            ft = eval(ft, {"__builtins__": None}, local_vars)
-        return ft
-    except (AttributeError, TypeError):
+DEFAULT_FIELD_TYPE_DEFINITION = Text
+DEFAULT_FIELD_TYPE = FieldType(name="Text")
+
+
+re_field_type = re.compile(r"(\w+)(\(.*\))?")
+
+
+def str_to_field_type(s: str) -> FieldType:
+    m = re_field_type.match(s)
+    if m is None:
         raise NotImplementedError(s)
+    name = m.group(1)
+    parameters = {}
+    param_str = m.group(2)
+    type_def = get_field_type_definition(name)
+    if param_str:
+        # params = [p.strip().split("=") for p in param_str.split(",")]
+        def _get_args(*args, **kwargs):
+            return args, kwargs
+
+        # Easiest to just evaluate the args, rather try to parse their python types
+        args, kwargs = eval("_g" + param_str, {"__builtins__": None}, {"_g": _get_args})
+        kwargs.update(type_def.assign_parameters(args))
+        parameters = kwargs
+    return FieldType(name=name, parameters=parameters)
 
 
-def ensure_field_type(ft: Union[str, FieldType, Type[FieldType]]) -> FieldType:
+def ensure_field_type(ft: Union[str, FieldType]) -> FieldType:
     if isinstance(ft, str):
         ft = str_to_field_type(ft)
-    if isinstance(ft, type):
-        ft = ft()
     return ft
