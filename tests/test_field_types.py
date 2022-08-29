@@ -13,6 +13,7 @@ from commonmodel.field_types import (
     Float,
     Integer,
     Interval,
+    Json,
     LongBinary,
     LongText,
     Text,
@@ -72,6 +73,7 @@ def test_pickle():
         ("Decimal(precision=16, scale=2)", Decimal(16, 2)),
         ("Decimal(16,2)", Decimal(16, 2)),
         ("Decimal()", Decimal()),
+        ("Json(astext_type=Text())", Json()),
     ],
 )
 def test_str_to_field_types(s: str, expected: Union[FieldType, Type[FieldType]]):

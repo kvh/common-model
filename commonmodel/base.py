@@ -44,12 +44,29 @@ class FieldRoles(FrozenPydanticBase):
         return ensure_list(ordering)
 
 
+# class ValidatorType(str, Enum):
+#     NotNull = "NotNull"
+#     # What others....?
+
+# class Validator(FrozenPydanticBase):
+#     type: ValidatorType
+#     fields: List[str] = []
+#     default_severity: ValidationSeverity = ValidationSeverity.Warning
+#     description: Optional[str] = None
+
+# class Index(FrozenPydanticBase):
+#     type: IndexType
+#     fields: List[str] = []
+
+
 class Schema(FrozenPydanticBase):
     name: str
     description: Optional[str]
     fields: List[Field]
     unique_on: List[str] = []
     field_roles: FieldRoles = pydantic.Field(default_factory=FieldRoles)
+    # validators: List[Validator] = []
+    # indexes: List[Index] = []
     immutable: bool = False
     raw_definition: Optional[str] = None
     commonmodel: Optional[str] = None  # commonmodel spec version

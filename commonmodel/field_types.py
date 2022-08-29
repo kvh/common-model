@@ -269,7 +269,13 @@ def str_to_field_type(s: str) -> FieldType:
             return args, kwargs
 
         # Easiest to just evaluate the args, rather try to parse their python types
-        args, kwargs = eval("_g" + param_str, {"__builtins__": None}, {"_g": _get_args})
+        try:
+            args, kwargs = eval(
+                "_g" + param_str, {"__builtins__": None}, {"_g": _get_args}
+            )
+        except TypeError:
+            # Failed to eval some value, just ignore the args (TODO: handle this more gracefully)
+            args, kwargs = [], {}
         kwargs.update(type_def.assign_parameters(args))
         parameters = kwargs
     return FieldType(name=name, parameters=parameters)
