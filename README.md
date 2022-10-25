@@ -1,21 +1,16 @@
 # CommonModel
 
-**Universal schemas for structured data**
+**An open standard for describing structured data**
 
-CommonModel is a shared specification for describing the structure and semantics
-of objects and their data representations -- a "lingua franca"
-for modeling the world's data.
+CommonModel is an open specification for describing the structure and semantics
+of objects and their data representations, called `Schemas` -- a universal format for modeling the world's data.
 
 APIs, libraries, researchers, and analysts can use CommonModel to communicate
-data frictionlessly when publishing api endpoints, aggregating ML training data,
+data structure and properties when publishing api endpoints, aggregating ML training data,
 curating public datasets, or building composable data components.
 
-<!--
-As an example, the Common Model Repository defines a `WorldBankCountryIndicator` schema
-that conforms to data from the Worldbank api endpoint for country indicators. Here is
-an abbreviated snippet of that schema -->
 
-Some example common Schemas:
+Some example Schemas:
 
 - Country
 - Currency
@@ -44,15 +39,15 @@ commonmodel: 0.3.0
 
 name: Transaction
 description: |
-  Represents any uniquely identified commercial transaction of a set amount at a
+  Represents a transaction of an amount at a
   given time, optionally specifying the buyer, seller, currency, and item transacted.
 immutable: true
 unique_on:
   - id
 fields:
-  id: Text NotNull
-  amount: Decimal(16,2) NotNull
-  transacted_at: DateTime NotNull
+  id: Text
+  amount: Decimal(16,2)
+  transacted_at: DateTime
   buyer_id: Text
   seller_id: Text
   item_id: Text

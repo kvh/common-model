@@ -6,7 +6,7 @@ name = "common-model"
 packages = [
   {include = "commonmodel"},
 ]
-version = "0.5.1"
+version = "0.5.2"
 
 [tool.poetry.dependencies]
 PyYAML = ">= 5.4.1"

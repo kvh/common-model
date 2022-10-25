@@ -3,10 +3,12 @@ from pathlib import Path
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
+import json
 import re
 import yaml
 from commonmodel.field_types import FieldType, FieldTypeLike, ensure_field_type
 from commonmodel.utils import FrozenPydanticBase
+from enum import Enum
 import pydantic
 
 
@@ -34,6 +36,7 @@ class FieldRoles(FrozenPydanticBase):
     dimensions: List[str] = []
     created_ordering: List[str] = []
     updated_ordering: List[str] = []
+    strictly_monotonic_ordering: List[str] = []
 
     @pydantic.validator("created_ordering", pre=True)
     def check_created_ordering(cls, ordering: Any) -> list:
@@ -41,6 +44,10 @@ class FieldRoles(FrozenPydanticBase):
 
     @pydantic.validator("updated_ordering", pre=True)
     def check_updated_ordering(cls, ordering: Any) -> list:
+        return ensure_list(ordering)
+
+    @pydantic.validator("strictly_monotonic_ordering", pre=True)
+    def check_strictly_monotonic_ordering(cls, ordering: Any) -> list:
         return ensure_list(ordering)
 
 
@@ -54,9 +61,17 @@ class FieldRoles(FrozenPydanticBase):
 #     default_severity: ValidationSeverity = ValidationSeverity.Warning
 #     description: Optional[str] = None
 
+# Doesn't seem like indexes belong on a Schema.
+# They are an operational concern that should be implied by the field_roles,
+# and handled by downstream operations
 # class Index(FrozenPydanticBase):
-#     type: IndexType
+#     name: str
 #     fields: List[str] = []
+#     unique: bool = False
+
+#     @pydantic.validator("fields", pre=True)
+#     def check_fields(cls, fields: Any) -> list:
+#         return ensure_list(fields)
 
 
 class Schema(FrozenPydanticBase):
@@ -66,7 +81,6 @@ class Schema(FrozenPydanticBase):
     unique_on: List[str] = []
     field_roles: FieldRoles = pydantic.Field(default_factory=FieldRoles)
     # validators: List[Validator] = []
-    # indexes: List[Index] = []
     immutable: bool = False
     raw_definition: Optional[str] = None
     commonmodel: Optional[str] = None  # commonmodel spec version
@@ -92,7 +106,7 @@ class Schema(FrozenPydanticBase):
         for f in self.fields:
             if f.name == field_name:
                 return f
-        raise NameError
+        raise NameError(field_name)
 
     def field_names(self) -> List[str]:
         return [f.name for f in self.fields]
@@ -122,6 +136,12 @@ def schema_from_yaml_file(pth: Union[str, Path], **overrides: Any) -> Schema:
     with open(pth) as f:
         s = f.read()
     return schema_from_yaml(s, **overrides)
+
+
+def schema_from_json(jsn: str, **overrides: Any) -> Schema:
+    d = json.loads(jsn)
+    d.update(overrides)
+    return Schema(**d)
 
 
 re_field_expr = re.compile(r"\w+(\([^)]+\))?")

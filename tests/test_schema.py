@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict
 
 from commonmodel.base import (
@@ -8,6 +9,7 @@ from commonmodel.base import (
     create_quick_schema,
     schema_from_yaml,
     schema_like_to_name,
+    schema_from_json,
 )
 from commonmodel.field_types import Json, Text
 
@@ -77,6 +79,8 @@ fields:
 field_roles:
   primary_identifier: id
   created_ordering: transacted_at
+  updated_ordering: transacted_at
+  strictly_monotonic_ordering: id
   dimensions: [buyer_id, seller_id, item_id]
   measures: [amount]
 
@@ -96,6 +100,12 @@ documentation:
 
 def test_full_schema_yaml():
     tt = schema_from_yaml(full_test_schema_yaml)
+
+
+def test_full_schema_json():
+    tt = schema_from_yaml(full_test_schema_yaml)
+    t2 = schema_from_json(json.dumps(tt.dict()))
+    assert tt == t2
 
 
 def test_migration():
